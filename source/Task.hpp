@@ -18,11 +18,16 @@ class Task final {
     const T value_;
   };
 
-  const std::shared_ptr<const Concept> model_;
+  std::unique_ptr<const Concept> model_;
 
 public:
-  template<typename T>
+  constexpr Task() = default;
+
+  template<typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, Task>, bool> = true>
   Task(T&& value)
-    : model_{std::make_shared<Model<std::decay_t<T>>>(std::forward<T>(value))} {
+    : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
+
+  Task(Task&&) noexcept = default;
+  Task& operator=(Task&&) noexcept = default;
 };
