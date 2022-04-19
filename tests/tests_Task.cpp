@@ -4,8 +4,31 @@
 #include "../source/Task.hpp"
 #include "Tracer.hpp"
 
+#include <utility>
+
+TEST_CASE("Default construction") {
+  Task t;
+
+  REQUIRE(true);
+}
+
 TEST_CASE("Construction") {
-  Task x{Tracer{}};
+  Task t{Tracer{true}};
+
+  REQUIRE(true);
+}
+
+TEST_CASE("Move construction") {
+  Task t1{Tracer{true}};
+  Task t2{std::move(t1)};
+
+  REQUIRE(true);
+}
+
+TEST_CASE("Move assignment") {
+  Task t1{Tracer{true}}, t2;
+
+  t2 = std::move(t1);
 
   REQUIRE(true);
 }
