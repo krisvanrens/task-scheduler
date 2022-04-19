@@ -56,7 +56,7 @@ TEST_CASE("Copy assignment") {
   REQUIRE(t2.counts().move_assign == 0);
 }
 
-TEST_CASE("Copy construction") {
+TEST_CASE("Move construction") {
   Tracer t1;
 
   Tracer t2{std::move(t1)};
@@ -76,7 +76,7 @@ TEST_CASE("Copy construction") {
   REQUIRE(t2.counts().move_assign == 0);
 }
 
-TEST_CASE("Copy assignment") {
+TEST_CASE("Move assignment") {
   Tracer t1, t2;
 
   t2 = std::move(t1);
