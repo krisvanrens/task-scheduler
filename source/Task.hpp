@@ -1,11 +1,18 @@
 #pragma once
 
+#include <functional>
 #include <memory>
+#include <type_traits>
 #include <utility>
 
-class Task final {
+template<typename>
+class Task;
+
+template<typename Ret, typename... Args>
+class Task<Ret(Args...)> final {
   struct Concept {
     virtual ~Concept() = default;
+    virtual Ret invoke_(Args...) = 0;
   };
 
   template<typename T>
@@ -15,10 +22,14 @@ class Task final {
       : value_{std::forward<U>(value)} {
     }
 
-    const T value_;
+    Ret invoke_(Args... args) override {
+      return std::invoke(value_, std::forward<Args>(args)...);
+    }
+
+    T value_;
   };
 
-  std::unique_ptr<const Concept> model_;
+  std::unique_ptr<Concept> model_;
 
 public:
   constexpr Task() = default;
@@ -30,4 +41,12 @@ public:
 
   Task(Task&&) noexcept = default;
   Task& operator=(Task&&) noexcept = default;
+
+  Ret operator()(Args... args) {
+    if (!model_) {
+      throw std::bad_function_call{};
+    }
+
+    return model_->invoke_(std::forward<Args>(args)...);
+  }
 };
