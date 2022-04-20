@@ -5,8 +5,8 @@ Task Scheduler in C++.
 ## Requirements
 
 * Conan (for building the tests)
-* GCC v10 or higher
-* Clang-format v10 or higher
+* GCC v10 or higher, or Clang v12 or higher
+* Clang-format v12 or higher
 
 ## Building instructions
 
