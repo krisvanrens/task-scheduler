@@ -1,18 +1,18 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include <utility>
+
 #include "../source/Task.hpp"
 #include "Tracer.hpp"
 
-#include <utility>
-
 class Callable final : public Tracer {
-  bool &is_called_;
+  bool& is_called_;
 
 public:
-  explicit Callable(bool &is_called)
-    : Tracer{},
-      is_called_{is_called} {
+  explicit Callable(bool& is_called)
+    : Tracer{}
+    , is_called_{is_called} {
   }
 
   void operator()() {
@@ -47,7 +47,7 @@ TEST_CASE("Construction from function object") {
 TEST_CASE("Construction from lambda") {
   bool is_called = false;
 
-  Task<void()> t{[&]{ is_called = true; }};
+  Task<void()> t{[&] { is_called = true; }};
 
   REQUIRE(!is_called);
 

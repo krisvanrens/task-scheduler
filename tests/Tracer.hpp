@@ -25,7 +25,7 @@ public:
     counts_.ctor++;
 
     if (verbose_) {
-      printf("%p: ctor\n", static_cast<void *>(this));
+      printf("%p: ctor\n", static_cast<void*>(this));
     }
   }
 
@@ -33,7 +33,7 @@ public:
     counts_.dtor++;
 
     if (verbose_) {
-      printf("%p: dtor\n", static_cast<void *>(this));
+      printf("%p: dtor\n", static_cast<void*>(this));
     }
   }
 
@@ -44,7 +44,7 @@ public:
     counts_.copy_ctor++;
 
     if (verbose_) {
-      printf("%p: copy ctor\n", static_cast<void *>(this));
+      printf("%p: copy ctor\n", static_cast<void*>(this));
     }
   }
 
@@ -55,7 +55,7 @@ public:
     counts_.copy_assign++;
 
     if (verbose_) {
-      printf("%p: copy assign\n", static_cast<void *>(this));
+      printf("%p: copy assign\n", static_cast<void*>(this));
     }
 
     return *this;
@@ -68,7 +68,7 @@ public:
     counts_.move_ctor++;
 
     if (verbose_) {
-      printf("%p: move ctor\n", static_cast<void *>(this));
+      printf("%p: move ctor\n", static_cast<void*>(this));
     }
   }
 
@@ -79,7 +79,7 @@ public:
     counts_.move_assign++;
 
     if (verbose_) {
-      printf("%p: move assign\n", static_cast<void *>(this));
+      printf("%p: move assign\n", static_cast<void*>(this));
     }
 
     return *this;

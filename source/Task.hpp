@@ -11,7 +11,7 @@ class Task;
 template<typename Ret, typename... Args>
 class Task<Ret(Args...)> final {
   struct Concept {
-    virtual ~Concept() = default;
+    virtual ~Concept()           = default;
     virtual Ret invoke_(Args...) = 0;
   };
 
