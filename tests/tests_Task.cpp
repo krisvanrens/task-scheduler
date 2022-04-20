@@ -6,29 +6,63 @@
 
 #include <utility>
 
-TEST_CASE("Default construction") {
-  Task t;
+class Callable final : public Tracer {
+  bool &is_called_;
 
-  REQUIRE(true);
+public:
+  explicit Callable(bool &is_called)
+    : Tracer{},
+      is_called_{is_called} {
+  }
+
+  void operator()() {
+    is_called_ = true;
+  }
+};
+
+TEST_CASE("Default construction") {
+  Task<void()> t;
+
+  CHECK_THROWS(t());
 }
 
 TEST_CASE("Construction") {
-  Task t{Tracer{}};
+  bool is_called = false;
 
-  REQUIRE(true);
+  Task<void()> t{Callable{is_called}};
+
+  REQUIRE(!is_called);
+
+  t();
+
+  CHECK(is_called);
 }
 
 TEST_CASE("Move construction") {
-  Task t1{Tracer{}};
-  Task t2{std::move(t1)};
+  bool is_called = false;
 
-  REQUIRE(true);
+  Task<void()> t1{Callable{is_called}};
+  Task<void()> t2{std::move(t1)};
+
+  REQUIRE(!is_called);
+
+  CHECK_THROWS(t1());
+  t2();
+
+  CHECK(is_called);
 }
 
 TEST_CASE("Move assignment") {
-  Task t1{Tracer{}}, t2;
+  bool is_called = false;
+
+  Task<void()> t1{Callable{is_called}}, t2;
 
   t2 = std::move(t1);
 
-  REQUIRE(true);
+  REQUIRE(!is_called);
+
+  CHECK_THROWS(t1());
+  t2();
+
+  CHECK(is_called);
 }
