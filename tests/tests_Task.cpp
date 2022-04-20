@@ -20,13 +20,19 @@ public:
   }
 };
 
+static bool free_function_is_called = false;
+
+void free_function() {
+  free_function_is_called = true;
+}
+
 TEST_CASE("Default construction") {
   Task<void()> t;
 
   CHECK_THROWS(t());
 }
 
-TEST_CASE("Construction") {
+TEST_CASE("Construction from function object") {
   bool is_called = false;
 
   Task<void()> t{Callable{is_called}};
@@ -36,6 +42,30 @@ TEST_CASE("Construction") {
   t();
 
   CHECK(is_called);
+}
+
+TEST_CASE("Construction from lambda") {
+  bool is_called = false;
+
+  Task<void()> t{[&]{ is_called = true; }};
+
+  REQUIRE(!is_called);
+
+  t();
+
+  CHECK(is_called);
+}
+
+TEST_CASE("Construction from free function") {
+  free_function_is_called = false;
+
+  Task<void()> t{free_function};
+
+  REQUIRE(!free_function_is_called);
+
+  t();
+
+  CHECK(free_function_is_called);
 }
 
 TEST_CASE("Move construction") {
