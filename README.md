@@ -26,13 +26,13 @@ Requirements levels as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.tx
 
 ## Building
 
-## Requirements
+Requirements:
 
 * Conan (for building the tests),
 * GCC v12 or higher, or Clang v13 or higher,
 * Clang-format v13 or higher,
 
-## Instructions
+Instructions:
 
 ```sh
 mkdir build
