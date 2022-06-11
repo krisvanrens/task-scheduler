@@ -39,7 +39,7 @@ public:
     : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
 
-  Task(Task&&) noexcept = default;
+  Task(Task&&) noexcept            = default;
   Task& operator=(Task&&) noexcept = default;
 
   explicit operator bool() const noexcept {

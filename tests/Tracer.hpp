@@ -14,8 +14,8 @@ class Tracer {
     unsigned int move_assign = 0;
 
     void print() const {
-      printf("Counts: [ctor=%u, dtor=%u, copy_ctor=%u, copy_assign=%u, move_ctor=%u, move_assign=%u]\n", ctor, dtor,
-             copy_ctor, copy_assign, move_ctor, move_assign);
+      printf("Counts: [ctor=%u, dtor=%u, copy_ctor=%u, copy_assign=%u, move_ctor=%u, move_assign=%u]\n", ctor, dtor, copy_ctor, copy_assign,
+             move_ctor, move_assign);
     }
   } counts_;
 

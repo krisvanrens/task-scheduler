@@ -227,7 +227,7 @@ TEST_SUITE("Task") {
     }
 
     SUBCASE("rvalue reference") {
-      Task<void(test_t&&)> t{[](test_t&& arg) { CHECK(arg.value == 42); }};
+      Task<void(test_t &&)> t{[](test_t&& arg) { CHECK(arg.value == 42); }};
 
       t(test_t{42});
 
@@ -238,7 +238,7 @@ TEST_SUITE("Task") {
 
   TEST_CASE("Task argument propagation (mismatched signatures)") {
     SUBCASE("const lvalue reference to value") {
-      Task<void(test_t)> t{[](const test_t &arg) { CHECK(arg.value == 42); }};
+      Task<void(test_t)> t{[](const test_t& arg) { CHECK(arg.value == 42); }};
 
       t(test_t{42});
 
@@ -250,7 +250,7 @@ TEST_SUITE("Task") {
     }
 
     SUBCASE("rvalue reference to value") {
-      Task<void(test_t)> t{[](test_t &&arg) { CHECK(arg.value == 42); }};
+      Task<void(test_t)> t{[](test_t&& arg) { CHECK(arg.value == 42); }};
 
       t(test_t{42});
 
@@ -278,13 +278,13 @@ TEST_SUITE("Task") {
     }
 
     SUBCASE("lvalue reference to rvalue reference") {
-      Task<void(test_t&&)> t{[](test_t arg) { CHECK(arg.value == 42); }};
+      Task<void(test_t &&)> t{[](test_t arg) { CHECK(arg.value == 42); }};
 
       t(test_t{42});
     }
 
     SUBCASE("const lvalue reference to rvalue reference") {
-      Task<void(test_t&&)> t{[](const test_t& arg) { CHECK(arg.value == 42); }};
+      Task<void(test_t &&)> t{[](const test_t& arg) { CHECK(arg.value == 42); }};
 
       t(test_t{42});
 
