@@ -1,8 +1,8 @@
 # task-scheduler
 
-Task Scheduler in C++.
+Task Scheduler in C++20.
 
-# Requirements
+# Functional requirements
 
 Requirements levels as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
@@ -28,9 +28,9 @@ Requirements levels as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.tx
 
 ## Requirements
 
-* Conan (for building the tests)
-* GCC v10 or higher, or Clang v12 or higher
-* Clang-format v12 or higher
+* Conan (for building the tests),
+* GCC v12 or higher, or Clang v13 or higher,
+* Clang-format v13 or higher,
 
 ## Instructions
 
