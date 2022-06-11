@@ -42,6 +42,10 @@ public:
   Task(Task&&) noexcept = default;
   Task& operator=(Task&&) noexcept = default;
 
+  explicit operator bool() const noexcept {
+    return !model_;
+  }
+
   Ret operator()(Args... args) {
     if (!model_) {
       throw std::bad_function_call{};
