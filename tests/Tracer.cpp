@@ -1,9 +1,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include "Tracer.hpp"
+
 #include <doctest/doctest.h>
 
 #include <utility>
-
-#include "Tracer.hpp"
 
 TEST_CASE("Construction") {
   Tracer t;
