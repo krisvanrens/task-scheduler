@@ -28,7 +28,7 @@ BitFieldColonSpacing: Both
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Attach
 BreakBeforeConceptDeclarations: 'true'
-BreakBeforeTernaryOperators: 'false'
+BreakBeforeTernaryOperators: 'true'
 BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeComma
 BreakStringLiterals: 'true'
