@@ -10,6 +10,9 @@ class Task;
 
 template<typename Ret, typename... Args>
 class Task<Ret(Args...)> final {
+  template<typename T>
+  using is_task_t = std::enable_if_t<!std::is_same_v<std::decay_t<T>, Task>, bool>;
+
   struct Concept {
     virtual ~Concept()           = default;
     virtual Ret invoke_(Args...) = 0;
@@ -34,7 +37,6 @@ class Task<Ret(Args...)> final {
 public:
   constexpr Task() = default;
 
-  template<typename T, std::enable_if_t<!std::is_same_v<std::decay_t<T>, Task>, bool> = true>
   Task(T&& value)
     : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
