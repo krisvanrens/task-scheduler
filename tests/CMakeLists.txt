@@ -15,6 +15,15 @@ target_link_libraries(
   CONAN_PKG::doctest)
 
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DTEST_NONSTATIC_REQUIRE)
+
+add_executable(tests_Scheduler Scheduler.cpp)
+target_link_libraries(
+  tests_Scheduler
+  PRIVATE
+  project_warnings
+  project_options
+  CONAN_PKG::doctest)
+
 add_executable(tests_Task Task.cpp)
 target_link_libraries(
   tests_Task
