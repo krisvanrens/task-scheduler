@@ -37,7 +37,8 @@ class Task<Ret(Args...)> final {
 public:
   constexpr Task() = default;
 
-  Task(T&& value)
+  template<typename T, typename = is_task_t<T>>
+  requires std::is_invocable_r_v<Ret, T, Args...> Task(T&& value)
     : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
 
