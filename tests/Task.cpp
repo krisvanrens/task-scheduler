@@ -105,14 +105,14 @@ TEST_SUITE("Task") {
   TEST_CASE_TEMPLATE("Default construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
     Task<T> t;
 
-    CHECK(t);
+    CHECK(!t);
     CHECK_THROWS(std::apply(t, make_args<T>()));
   }
 
   TEST_CASE_TEMPLATE("Non-default construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
     Task<T> t{make_function<T>()};
 
-    CHECK(!t);
+    CHECK(t);
 
     std::apply(t, make_args<T>());
   }
@@ -123,10 +123,10 @@ TEST_SUITE("Task") {
 
     Task<T> t2{std::move(t1)};
 
-    CHECK(!t2);
+    CHECK(t2);
     std::apply(t2, make_args<T>());
 
-    CHECK(t1);
+    CHECK(!t1);
     CHECK_THROWS(std::apply(t1, make_args<T>()));
   }
 
@@ -135,14 +135,14 @@ TEST_SUITE("Task") {
     Task<T> t2;
 
     std::apply(t1, make_args<T>());
-    REQUIRE(t2);
+    REQUIRE(!t2);
 
     t2 = std::move(t1);
 
-    CHECK(!t2);
+    CHECK(t2);
     std::apply(t2, make_args<T>());
 
-    CHECK(t1);
+    CHECK(!t1);
     CHECK_THROWS(std::apply(t1, make_args<T>()));
   }
 

@@ -46,7 +46,7 @@ public:
   Task& operator=(Task&&) noexcept = default;
 
   explicit operator bool() const noexcept {
-    return !model_;
+    return !!model_;
   }
 
   Ret operator()(Args... args) {
