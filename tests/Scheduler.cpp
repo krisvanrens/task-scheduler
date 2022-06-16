@@ -3,6 +3,7 @@
 
 #include <doctest/doctest.h>
 
+#include <cstdio>
 #include <utility>
 
 #include "../source/Task.hpp"
@@ -21,19 +22,21 @@ TEST_SUITE("Scheduler") {
     REQUIRE(t3);
     REQUIRE(t4);
 
-    Scheduler<Job, 3> s;
+    Scheduler<Job, 3> s1{1};
 
-    CHECK(s.schedule(std::move(t1)));
-    CHECK(s.schedule(std::move(t2)));
-    CHECK(s.schedule(std::move(t3)));
+    CHECK(s1.schedule(std::move(t1)));
+    CHECK(s1.schedule(std::move(t2)));
+    CHECK(s1.schedule(std::move(t3)));
 
     CHECK(!t1);
     CHECK(!t2);
     CHECK(!t3);
 
-    CHECK(!s.schedule(std::move(t4)));
+    CHECK(!s1.schedule(std::move(t4)));
     CHECK(t4);
 
-    s.run_all();
+    s1.run_all();
+
+    CHECK_THROWS_AS((Scheduler<Job, 3>{100}), std::overflow_error);
   }
 } // TEST_SUITE
