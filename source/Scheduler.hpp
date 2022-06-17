@@ -1,8 +1,7 @@
 #pragma once
 
-#include <cstdio> // XXX
-
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <queue>
 #include <stdexcept>
@@ -15,14 +14,18 @@ requires(MaxQueueLength < 8192) class Scheduler final {
   const unsigned int num_executors_;
   std::vector<std::jthread> executors_;
 
-  void executor() {
-    // TODO
-    printf("Executing..\n");
+  void executor(std::stop_token stop_token) {
+    while (!stop_token.stop_requested()) {
+      if (!queue_.empty()) {
+        queue_.front()();
+        queue_.pop();
+      }
+    }
   }
 
   void create_executors() {
     for (unsigned int i = 0; i < num_executors_; i++) {
-      executors_.emplace_back(&Scheduler<Task, MaxQueueLength>::executor, this);
+      executors_.emplace_back(std::bind_front(&Scheduler<Task, MaxQueueLength>::executor, this));
     }
   }
 
@@ -46,13 +49,5 @@ public:
     }
 
     return false;
-  }
-
-  // XXX
-  void run_all() {
-    while (!queue_.empty()) {
-      queue_.front()();
-      queue_.pop();
-    }
   }
 };

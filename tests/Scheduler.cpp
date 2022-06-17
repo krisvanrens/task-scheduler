@@ -35,8 +35,6 @@ TEST_SUITE("Scheduler") {
     CHECK(!s1.schedule(std::move(t4)));
     CHECK(t4);
 
-    s1.run_all();
-
     CHECK_THROWS_AS((Scheduler<Job, 3>{100}), std::overflow_error);
   }
 } // TEST_SUITE
