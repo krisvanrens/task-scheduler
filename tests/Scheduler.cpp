@@ -37,4 +37,5 @@ TEST_SUITE("Scheduler") {
 
     CHECK_THROWS_AS((Scheduler<Job, 3>{100}), std::overflow_error);
   }
+
 } // TEST_SUITE
