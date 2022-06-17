@@ -10,8 +10,8 @@
 
 template<typename Task, unsigned int MaxQueueLength>
 requires(MaxQueueLength < 8192) class Scheduler final {
-  std::queue<Task> queue_;
-  const unsigned int num_executors_;
+  std::queue<Task>          queue_;
+  const unsigned int        num_executors_;
   std::vector<std::jthread> executors_;
 
   void executor(std::stop_token stop_token) {
