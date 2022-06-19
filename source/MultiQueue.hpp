@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <queue>
 #include <stdexcept>
+#include <string>
 
 constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
 constexpr std::size_t MAX_QUEUE_LENGTH     = 8192;
@@ -20,7 +21,7 @@ public:
     }
 
     if (num_queues > MAX_NUMBER_OF_QUEUES) {
-      throw std::overflow_error("Too many queues requested");
+      throw std::overflow_error("Number of queues must be <" + std::to_string(MAX_NUMBER_OF_QUEUES));
     }
 
     queues_.resize(num_queues);
