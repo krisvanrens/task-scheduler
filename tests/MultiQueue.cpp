@@ -47,7 +47,7 @@ TEST_SUITE("MultiQueue") {
     CHECK(MultiQueue<int, 8192>{1024}.max_capacity() == 8'388'608);
   }
 
-  TEST_CASE("Adding elements") {
+  TEST_CASE("Pushing elements (single queue)") {
     Queue x{1};
 
     REQUIRE(x.max_capacity() == x.max_queue_length());
@@ -60,7 +60,7 @@ TEST_SUITE("MultiQueue") {
     CHECK_FALSE(x.push(42));
   }
 
-  TEST_CASE("Adding elements (multiple queues)") {
+  TEST_CASE("Pushing elements (multiple queues)") {
     Queue x{10};
 
     REQUIRE(x.max_capacity() == 10 * x.max_queue_length());
