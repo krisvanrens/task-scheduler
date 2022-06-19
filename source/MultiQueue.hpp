@@ -49,6 +49,9 @@ public:
     sink_cursor_ = queues_.begin();
   }
 
+  MultiQueue(MultiQueue&&)            = default;
+  MultiQueue& operator=(MultiQueue&&) = default;
+
   [[nodiscard]] constexpr std::size_t max_queue_length() const {
     return MaxQueueLength;
   }
@@ -67,6 +70,4 @@ public:
     return true;
   }
 
-  MultiQueue(MultiQueue&&)            = default;
-  MultiQueue& operator=(MultiQueue&&) = default;
 };
