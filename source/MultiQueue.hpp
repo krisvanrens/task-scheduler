@@ -70,4 +70,7 @@ public:
     return true;
   }
 
+  [[nodiscard]] bool push(T& element) {
+    return push(T{element});
+  }
 };
