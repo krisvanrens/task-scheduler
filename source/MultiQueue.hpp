@@ -53,7 +53,7 @@ public:
     return queues_.size() * MaxQueueLength;
   }
 
-  [[nodiscard]] bool push([[maybe_unused]] T&& element) {
+  [[nodiscard]] bool push(T&& element) {
     if (!advance_sink()) {
       return false;
     }
