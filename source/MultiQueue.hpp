@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
 #include <queue>
 #include <stdexcept>
 #include <string>
@@ -46,7 +47,7 @@ public:
     }
 
     queues_.resize(num_queues);
-    sink_cursor_ = queues_.begin();
+    sink_cursor_ = std::prev(queues_.end());
   }
 
   MultiQueue(MultiQueue&&)            = default;
@@ -72,5 +73,20 @@ public:
 
   [[nodiscard]] bool push(T& element) {
     return push(T{element});
+  }
+
+  [[nodiscard]] std::optional<T> pop(unsigned int index) {
+    if (index >= queues_.size()) {
+      throw std::out_of_range("Queue index out of range");
+    }
+
+    std::optional<T> result;
+
+    if (!queues_[index].empty()) {
+      result = std::move(queues_[index].front());
+      queues_[index].pop();
+    }
+
+    return result;
   }
 };

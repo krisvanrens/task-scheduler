@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <utility>
 
-using ValueType = int;
+using ValueType = unsigned int;
 using Queue     = MultiQueue<ValueType, 10>;
 
 TEST_SUITE("MultiQueue") {
@@ -71,6 +71,51 @@ TEST_SUITE("MultiQueue") {
 
     CHECK_FALSE(x.push(42));
     CHECK_FALSE(x.push(42));
+  }
+
+  TEST_CASE("Popping elements queue-indexed (single queue)") {
+    Queue x{1};
+
+    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+      REQUIRE(x.push(i));
+    }
+
+    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+      const auto element = x.pop(0);
+      REQUIRE(element.has_value());
+      CHECK(element.value() == i);
+    }
+
+    CHECK_FALSE(x.pop(0).has_value());
+  }
+
+  TEST_CASE("Popping elements queue-indexed (multiple queues)") {
+    Queue x{10};
+
+    for (unsigned int i = 0; i < (10 * x.max_queue_length()); i++) {
+      REQUIRE(x.push(i));
+    }
+
+    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+      for (unsigned int queue_idx = 0; queue_idx < 10; queue_idx++) {
+        const auto element = x.pop(queue_idx);
+        REQUIRE(element.has_value());
+        CHECK(element.value() == ((i * 10) + queue_idx));
+      }
+    }
+
+    for (unsigned int queue_idx = 0; queue_idx < 10; queue_idx++) {
+      CHECK_FALSE(x.pop(queue_idx).has_value());
+    }
+  }
+
+  TEST_CASE("Popping queue-indexed (failure cases)") {
+    const auto pop = [](auto&& queue, unsigned int index) { [[maybe_unused]] auto result = queue.pop(index); };
+
+    CHECK_THROWS_AS(pop(Queue{1}, 1), std::out_of_range);
+    CHECK_THROWS_AS(pop(Queue{2}, 2), std::out_of_range);
+    CHECK_THROWS_AS(pop(Queue{10}, 10), std::out_of_range);
+    CHECK_THROWS_AS(pop(Queue{10}, 100), std::out_of_range);
   }
 
 } // TEST_SUITE
