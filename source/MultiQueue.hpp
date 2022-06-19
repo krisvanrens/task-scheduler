@@ -27,6 +27,10 @@ public:
     queues_.resize(num_queues);
   }
 
+  constexpr std::size_t max_capacity() const {
+    return queues_.size() * MaxQueueLength;
+  }
+
   MultiQueue(MultiQueue&&)            = default;
   MultiQueue& operator=(MultiQueue&&) = default;
 };
