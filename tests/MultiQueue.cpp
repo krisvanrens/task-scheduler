@@ -6,7 +6,10 @@
 #include <stdexcept>
 #include <utility>
 
-using Queue = MultiQueue<int, 100>;
+constexpr std::size_t MAX_QUEUE_LENGTH = 10;
+
+using ValueType = int;
+using Queue     = MultiQueue<ValueType, MAX_QUEUE_LENGTH>;
 
 TEST_SUITE("MultiQueue") {
   TEST_CASE("Construction") {
@@ -38,6 +41,32 @@ TEST_SUITE("MultiQueue") {
     CHECK(MultiQueue<int, 1024>{2}.max_capacity() == 2'048);
     CHECK(MultiQueue<int, 1024>{10}.max_capacity() == 10'240);
     CHECK(MultiQueue<int, 8192>{1024}.max_capacity() == 8'388'608);
+  }
+
+  TEST_CASE("Adding elements") {
+    Queue x{1};
+
+    REQUIRE(x.max_capacity() == MAX_QUEUE_LENGTH);
+
+    for (unsigned int i = 0; i < MAX_QUEUE_LENGTH; i++) {
+      CHECK(x.push(42));
+    }
+
+    CHECK_FALSE(x.push(42));
+    CHECK_FALSE(x.push(42));
+  }
+
+  TEST_CASE("Adding elements (multiple queues)") {
+    Queue x{10};
+
+    REQUIRE(x.max_capacity() == 10 * MAX_QUEUE_LENGTH);
+
+    for (unsigned int i = 0; i < (10 * MAX_QUEUE_LENGTH); i++) {
+      CHECK(x.push(42));
+    }
+
+    CHECK_FALSE(x.push(42));
+    CHECK_FALSE(x.push(42));
   }
 
 } // TEST_SUITE

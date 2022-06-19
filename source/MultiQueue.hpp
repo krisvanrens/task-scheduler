@@ -5,14 +5,35 @@
 #include <stdexcept>
 #include <string>
 
-constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
-constexpr std::size_t MAX_QUEUE_LENGTH     = 8192;
-
 template<typename T, std::size_t MaxQueueLength>
-requires(MaxQueueLength <= MAX_QUEUE_LENGTH) class MultiQueue final {
-  using Queue = std::queue<T>;
+requires(MaxQueueLength <= 8192) class MultiQueue final {
+  using Queue     = std::queue<T>;
+  using Queues    = std::vector<Queue>;
+  using QueueIter = typename Queues::iterator;
 
-  std::vector<Queue> queues_;
+  static constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
+
+  Queues    queues_;
+  QueueIter sink_cursor_;
+
+  void advance_sink_cursor() {
+    if (++sink_cursor_ == queues_.end()) {
+      sink_cursor_ = queues_.begin();
+    }
+  }
+
+  [[nodiscard]] bool is_current_sink_full() {
+    return (sink_cursor_->size() >= MaxQueueLength);
+  }
+
+  [[nodiscard]] bool advance_sink() {
+    unsigned int advance_count = 0;
+    do {
+      advance_sink_cursor();
+    } while (is_current_sink_full() && (advance_count++ < queues_.size()));
+
+    return (advance_count < queues_.size());
+  }
 
 public:
   MultiQueue(unsigned int num_queues) {
@@ -25,10 +46,21 @@ public:
     }
 
     queues_.resize(num_queues);
+    sink_cursor_ = queues_.begin();
   }
 
-  constexpr std::size_t max_capacity() const {
+  [[nodiscard]] constexpr std::size_t max_capacity() const {
     return queues_.size() * MaxQueueLength;
+  }
+
+  [[nodiscard]] bool push([[maybe_unused]] T&& element) {
+    if (!advance_sink()) {
+      return false;
+    }
+
+    sink_cursor_->push(std::forward<T>(element));
+
+    return true;
   }
 
   MultiQueue(MultiQueue&&)            = default;
