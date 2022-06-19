@@ -49,6 +49,10 @@ public:
     sink_cursor_ = queues_.begin();
   }
 
+  [[nodiscard]] constexpr std::size_t max_queue_length() const {
+    return MaxQueueLength;
+  }
+
   [[nodiscard]] constexpr std::size_t max_capacity() const {
     return queues_.size() * MaxQueueLength;
   }

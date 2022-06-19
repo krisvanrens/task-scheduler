@@ -6,10 +6,8 @@
 #include <stdexcept>
 #include <utility>
 
-constexpr std::size_t MAX_QUEUE_LENGTH = 10;
-
 using ValueType = int;
-using Queue     = MultiQueue<ValueType, MAX_QUEUE_LENGTH>;
+using Queue     = MultiQueue<ValueType, 10>;
 
 TEST_SUITE("MultiQueue") {
   TEST_CASE("Construction") {
@@ -33,6 +31,12 @@ TEST_SUITE("MultiQueue") {
     x2 = std::move(x1);
   }
 
+  TEST_CASE("Getting the maximum queue lenght") {
+    CHECK(MultiQueue<int, 1>{1}.max_queue_length() == 1);
+    CHECK(MultiQueue<int, 2>{1}.max_queue_length() == 2);
+    CHECK(MultiQueue<int, 10>{1}.max_queue_length() == 10);
+  }
+
   TEST_CASE("Getting the maximum capacity") {
     CHECK(MultiQueue<int, 100>{1}.max_capacity() == 100);
     CHECK(MultiQueue<int, 100>{2}.max_capacity() == 200);
@@ -46,9 +50,9 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Adding elements") {
     Queue x{1};
 
-    REQUIRE(x.max_capacity() == MAX_QUEUE_LENGTH);
+    REQUIRE(x.max_capacity() == x.max_queue_length());
 
-    for (unsigned int i = 0; i < MAX_QUEUE_LENGTH; i++) {
+    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
       CHECK(x.push(42));
     }
 
@@ -59,9 +63,9 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Adding elements (multiple queues)") {
     Queue x{10};
 
-    REQUIRE(x.max_capacity() == 10 * MAX_QUEUE_LENGTH);
+    REQUIRE(x.max_capacity() == 10 * x.max_queue_length());
 
-    for (unsigned int i = 0; i < (10 * MAX_QUEUE_LENGTH); i++) {
+    for (unsigned int i = 0; i < (10 * x.max_queue_length()); i++) {
       CHECK(x.push(42));
     }
 
