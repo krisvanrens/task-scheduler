@@ -90,21 +90,22 @@ TEST_SUITE("MultiQueue") {
   }
 
   TEST_CASE("Popping elements queue-indexed (multiple queues)") {
-    Queue x{10};
+    constexpr unsigned int NUM_QUEUES = 10;
+    Queue x{NUM_QUEUES};
 
-    for (unsigned int i = 0; i < (10 * x.max_queue_length()); i++) {
+    for (unsigned int i = 0; i < (NUM_QUEUES * x.max_queue_length()); i++) {
       REQUIRE(x.push(i));
     }
 
     for (unsigned int i = 0; i < x.max_queue_length(); i++) {
-      for (unsigned int queue_idx = 0; queue_idx < 10; queue_idx++) {
+      for (unsigned int queue_idx = 0; queue_idx < NUM_QUEUES; queue_idx++) {
         const auto element = x.pop(queue_idx);
         REQUIRE(element.has_value());
-        CHECK(element.value() == ((i * 10) + queue_idx));
+        CHECK(element.value() == ((i * NUM_QUEUES) + queue_idx));
       }
     }
 
-    for (unsigned int queue_idx = 0; queue_idx < 10; queue_idx++) {
+    for (unsigned int queue_idx = 0; queue_idx < NUM_QUEUES; queue_idx++) {
       CHECK_FALSE(x.pop(queue_idx).has_value());
     }
   }
