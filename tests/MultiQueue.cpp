@@ -119,4 +119,40 @@ TEST_SUITE("MultiQueue") {
     CHECK_THROWS_AS(pop(Queue{10}, 100), std::out_of_range);
   }
 
+  TEST_CASE("Popping elements with work stealing") {
+    MultiQueue<unsigned int, 5> x{2};
+
+    for (unsigned int i = 0; i < (2 * x.max_queue_length()); i++) {
+      REQUIRE(x.push(i));
+    }
+
+    const auto pop_validate = [&](unsigned int queue_idx, unsigned int expected) {
+      const auto element = x.pop(queue_idx);
+      REQUIRE(element.has_value());
+      CHECK(element.value() == expected);
+    };
+
+    // First deplete about half of the first queue.
+    pop_validate(0, 0);
+    pop_validate(0, 2);
+    pop_validate(0, 4);
+
+    // Deplete the second queue.
+    pop_validate(1, 1);
+    pop_validate(1, 3);
+    pop_validate(1, 5);
+    pop_validate(1, 7);
+    pop_validate(1, 9);
+
+    // The second queue is now empty, elements should be taken from the first queue.
+    pop_validate(1, 6);
+    pop_validate(1, 8);
+
+    // The multi-queue is empty: subsequent pops should return no result.
+    CHECK_FALSE(x.pop(0).has_value());
+    CHECK_FALSE(x.pop(0).has_value());
+    CHECK_FALSE(x.pop(1).has_value());
+    CHECK_FALSE(x.pop(1).has_value());
+  }
+
 } // TEST_SUITE

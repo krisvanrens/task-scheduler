@@ -82,9 +82,22 @@ public:
 
     std::optional<T> result;
 
-    if (!queues_[index].empty()) {
-      result = std::move(queues_[index].front());
-      queues_[index].pop();
+    QueueIter source = queues_.begin() + index;
+
+    if (source->empty()) {
+      unsigned int advance_count = 0;
+      do {
+        source++;
+
+        if (source == queues_.end()) {
+          source = queues_.begin();
+        }
+      } while (source->empty() && (advance_count++ < queues_.size()));
+    }
+
+    if (!source->empty()) {
+      result = std::move(source->front());
+      source->pop();
     }
 
     return result;
