@@ -47,6 +47,7 @@ public:
     }
 
     queues_.resize(num_queues);
+
     sink_cursor_ = std::prev(queues_.end());
   }
 
