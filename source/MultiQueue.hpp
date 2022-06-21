@@ -1,15 +1,18 @@
 #pragma once
 
 #include <cstddef>
+#include <deque>
 #include <optional>
 #include <queue>
 #include <stdexcept>
 #include <string>
 
+#include "SafeQueue.hpp"
+
 template<typename T, std::size_t MaxQueueSize>
-requires(MaxQueueSize <= 8192) class MultiQueue final {
-  using Queue     = std::queue<T>;
-  using Queues    = std::vector<Queue>;
+class MultiQueue final {
+  using Queue     = SafeQueue<T, MaxQueueSize>;
+  using Queues    = std::deque<Queue>;
   using QueueIter = typename Queues::iterator;
 
   static constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
@@ -67,9 +70,7 @@ public:
       return false;
     }
 
-    sink_cursor_->push(std::forward<T>(element));
-
-    return true;
+    return sink_cursor_->push(std::forward<T>(element));
   }
 
   [[nodiscard]] bool push(T& element) {
@@ -80,8 +81,6 @@ public:
     if (index >= queues_.size()) {
       throw std::out_of_range("Queue index out of range");
     }
-
-    std::optional<T> result;
 
     QueueIter source = queues_.begin() + index;
 
@@ -96,11 +95,6 @@ public:
       } while (source->empty() && (advance_count++ < queues_.size()));
     }
 
-    if (!source->empty()) {
-      result = std::move(source->front());
-      source->pop();
-    }
-
-    return result;
+    return source->pop();
   }
 };
