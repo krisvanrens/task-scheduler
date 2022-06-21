@@ -6,8 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-template<typename T, std::size_t MaxQueueLength>
-requires(MaxQueueLength <= 8192) class MultiQueue final {
+template<typename T, std::size_t MaxQueueSize>
+requires(MaxQueueSize <= 8192) class MultiQueue final {
   using Queue     = std::queue<T>;
   using Queues    = std::vector<Queue>;
   using QueueIter = typename Queues::iterator;
@@ -24,7 +24,7 @@ requires(MaxQueueLength <= 8192) class MultiQueue final {
   }
 
   [[nodiscard]] bool is_current_sink_full() {
-    return (sink_cursor_->size() >= MaxQueueLength);
+    return (sink_cursor_->size() >= MaxQueueSize);
   }
 
   [[nodiscard]] bool advance_sink() {
@@ -53,12 +53,12 @@ public:
   MultiQueue(MultiQueue&&) noexcept            = default;
   MultiQueue& operator=(MultiQueue&&) noexcept = default;
 
-  [[nodiscard]] constexpr std::size_t max_queue_length() const {
-    return MaxQueueLength;
+  [[nodiscard]] static constexpr std::size_t max_queue_size() {
+    return MaxQueueSize;
   }
 
   [[nodiscard]] constexpr std::size_t max_capacity() const {
-    return queues_.size() * MaxQueueLength;
+    return queues_.size() * MaxQueueSize;
   }
 
   [[nodiscard]] bool push(T&& element) {

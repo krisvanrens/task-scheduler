@@ -31,10 +31,10 @@ TEST_SUITE("MultiQueue") {
     x2 = std::move(x1);
   }
 
-  TEST_CASE("Getting the maximum queue lenght") {
-    CHECK(MultiQueue<int, 1>{1}.max_queue_length() == 1);
-    CHECK(MultiQueue<int, 2>{1}.max_queue_length() == 2);
-    CHECK(MultiQueue<int, 10>{1}.max_queue_length() == 10);
+  TEST_CASE("Getting the maximum queue size") {
+    CHECK(MultiQueue<int, 1>{1}.max_queue_size() == 1);
+    CHECK(MultiQueue<int, 2>{1}.max_queue_size() == 2);
+    CHECK(MultiQueue<int, 10>{1}.max_queue_size() == 10);
   }
 
   TEST_CASE("Getting the maximum capacity") {
@@ -50,9 +50,9 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Pushing elements (single queue)") {
     Queue x{1};
 
-    REQUIRE(x.max_capacity() == x.max_queue_length());
+    REQUIRE(x.max_capacity() == x.max_queue_size());
 
-    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
       CHECK(x.push(42));
     }
 
@@ -63,9 +63,9 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Pushing elements (multiple queues)") {
     Queue x{10};
 
-    REQUIRE(x.max_capacity() == 10 * x.max_queue_length());
+    REQUIRE(x.max_capacity() == 10 * x.max_queue_size());
 
-    for (unsigned int i = 0; i < (10 * x.max_queue_length()); i++) {
+    for (unsigned int i = 0; i < (10 * x.max_queue_size()); i++) {
       CHECK(x.push(42));
     }
 
@@ -76,11 +76,11 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Popping elements queue-indexed (single queue)") {
     Queue x{1};
 
-    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
       REQUIRE(x.push(i));
     }
 
-    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
       const auto element = x.pop(0);
       REQUIRE(element.has_value());
       CHECK(element.value() == i);
@@ -93,11 +93,11 @@ TEST_SUITE("MultiQueue") {
     constexpr unsigned int NUM_QUEUES = 10;
     Queue                  x{NUM_QUEUES};
 
-    for (unsigned int i = 0; i < (NUM_QUEUES * x.max_queue_length()); i++) {
+    for (unsigned int i = 0; i < (NUM_QUEUES * x.max_queue_size()); i++) {
       REQUIRE(x.push(i));
     }
 
-    for (unsigned int i = 0; i < x.max_queue_length(); i++) {
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
       for (unsigned int queue_idx = 0; queue_idx < NUM_QUEUES; queue_idx++) {
         const auto element = x.pop(queue_idx);
         REQUIRE(element.has_value());
@@ -122,7 +122,7 @@ TEST_SUITE("MultiQueue") {
   TEST_CASE("Popping elements with work stealing") {
     MultiQueue<unsigned int, 5> x{2};
 
-    for (unsigned int i = 0; i < (2 * x.max_queue_length()); i++) {
+    for (unsigned int i = 0; i < (2 * x.max_queue_size()); i++) {
       REQUIRE(x.push(i));
     }
 
