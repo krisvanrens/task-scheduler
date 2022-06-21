@@ -50,8 +50,8 @@ public:
     sink_cursor_ = std::prev(queues_.end());
   }
 
-  MultiQueue(MultiQueue&&)            = default;
-  MultiQueue& operator=(MultiQueue&&) = default;
+  MultiQueue(MultiQueue&&) noexcept            = default;
+  MultiQueue& operator=(MultiQueue&&) noexcept = default;
 
   [[nodiscard]] constexpr std::size_t max_queue_length() const {
     return MaxQueueLength;

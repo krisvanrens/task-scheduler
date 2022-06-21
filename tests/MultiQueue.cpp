@@ -91,7 +91,7 @@ TEST_SUITE("MultiQueue") {
 
   TEST_CASE("Popping elements queue-indexed (multiple queues)") {
     constexpr unsigned int NUM_QUEUES = 10;
-    Queue x{NUM_QUEUES};
+    Queue                  x{NUM_QUEUES};
 
     for (unsigned int i = 0; i < (NUM_QUEUES * x.max_queue_length()); i++) {
       REQUIRE(x.push(i));
