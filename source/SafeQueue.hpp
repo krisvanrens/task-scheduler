@@ -8,8 +8,8 @@
 
 template<typename T, std::size_t MaxSize>
 requires((MaxSize > 0) && (MaxSize <= 8192)) class SafeQueue final {
-  std::queue<T>     queue_;
-  std::shared_mutex mutex_;
+  std::queue<T>             queue_;
+  mutable std::shared_mutex mutex_;
 
 public:
   SafeQueue() = default;
@@ -21,7 +21,7 @@ public:
     return MaxSize;
   }
 
-  [[nodiscard]] std::size_t size() {
+  [[nodiscard]] std::size_t size() const {
     std::shared_lock lock{mutex_};
 
     return queue_.size();
