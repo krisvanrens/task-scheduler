@@ -41,6 +41,18 @@ TEST_SUITE("SafeQueue") {
     CHECK(x.size() == 2);
   }
 
+  TEST_CASE("Get empty state") {
+    Queue x;
+
+    CHECK(x.empty());
+
+    REQUIRE(x.push(42u));
+    CHECK_FALSE(x.empty());
+
+    REQUIRE(x.pop().has_value());
+    CHECK(x.empty());
+  }
+
   TEST_CASE("Pushing elements") {
     Queue x;
 

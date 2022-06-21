@@ -27,6 +27,12 @@ public:
     return queue_.size();
   }
 
+  [[nodiscard]] bool empty() const {
+    std::shared_lock lock{mutex_};
+
+    return queue_.empty();
+  }
+
   template<typename U>
   [[nodiscard]] bool push(U&& element) {
     std::unique_lock lock{mutex_};
