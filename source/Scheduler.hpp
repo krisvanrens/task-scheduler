@@ -32,6 +32,10 @@ requires(MaxQueueLength < 8192) class Scheduler final {
 public:
   Scheduler(unsigned int num_executors)
     : num_executors_{num_executors} {
+    if (num_executors_ == 0) {
+      throw std::underflow_error("At least one executor must be requested");
+    }
+
     if (num_executors_ > std::jthread::hardware_concurrency()) {
       throw std::overflow_error("Too many executors requested for hardware support");
     }
