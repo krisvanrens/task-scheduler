@@ -16,9 +16,9 @@ target_link_libraries(
 
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DTEST_NONSTATIC_REQUIRE)
 
-add_executable(tests_MultiQueue MultiQueue.cpp)
+add_executable(tests_Multiqueue Multiqueue.cpp)
 target_link_libraries(
-  tests_MultiQueue
+  tests_Multiqueue
   PRIVATE
   project_warnings
   project_options

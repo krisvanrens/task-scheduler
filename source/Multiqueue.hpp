@@ -10,7 +10,7 @@
 #include "SafeQueue.hpp"
 
 template<typename T, std::size_t MaxQueueSize>
-class MultiQueue final {
+class Multiqueue final {
   using Queue     = SafeQueue<T, MaxQueueSize>;
   using Queues    = std::deque<Queue>;
   using QueueIter = typename Queues::iterator;
@@ -40,7 +40,7 @@ class MultiQueue final {
   }
 
 public:
-  MultiQueue(unsigned int num_queues) {
+  Multiqueue(unsigned int num_queues) {
     if (num_queues == 0) {
       throw std::underflow_error("Number of queues must be non-zero");
     }
@@ -54,8 +54,8 @@ public:
     sink_cursor_ = std::prev(queues_.end());
   }
 
-  MultiQueue(MultiQueue&&) noexcept            = default;
-  MultiQueue& operator=(MultiQueue&&) noexcept = default;
+  Multiqueue(Multiqueue&&) noexcept            = default;
+  Multiqueue& operator=(Multiqueue&&) noexcept = default;
 
   [[nodiscard]] static constexpr std::size_t max_queue_size() {
     return MaxQueueSize;

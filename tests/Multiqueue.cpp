@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/MultiQueue.hpp"
+#include "../source/Multiqueue.hpp"
 
 #include <doctest/doctest.h>
 
@@ -7,9 +7,9 @@
 #include <utility>
 
 using ValueType = unsigned int;
-using Queue     = MultiQueue<ValueType, 10>;
+using Queue     = Multiqueue<ValueType, 10>;
 
-TEST_SUITE("MultiQueue") {
+TEST_SUITE("Multiqueue") {
   TEST_CASE("Construction") {
     Queue x1{1};
     Queue x2{10};
@@ -32,19 +32,19 @@ TEST_SUITE("MultiQueue") {
   }
 
   TEST_CASE("Getting the maximum queue size") {
-    CHECK(MultiQueue<int, 1>{1}.max_queue_size() == 1);
-    CHECK(MultiQueue<int, 2>{1}.max_queue_size() == 2);
-    CHECK(MultiQueue<int, 10>{1}.max_queue_size() == 10);
+    CHECK(Multiqueue<int, 1>{1}.max_queue_size() == 1);
+    CHECK(Multiqueue<int, 2>{1}.max_queue_size() == 2);
+    CHECK(Multiqueue<int, 10>{1}.max_queue_size() == 10);
   }
 
   TEST_CASE("Getting the maximum capacity") {
-    CHECK(MultiQueue<int, 100>{1}.max_capacity() == 100);
-    CHECK(MultiQueue<int, 100>{2}.max_capacity() == 200);
-    CHECK(MultiQueue<int, 100>{10}.max_capacity() == 1'000);
-    CHECK(MultiQueue<int, 1024>{1}.max_capacity() == 1'024);
-    CHECK(MultiQueue<int, 1024>{2}.max_capacity() == 2'048);
-    CHECK(MultiQueue<int, 1024>{10}.max_capacity() == 10'240);
-    CHECK(MultiQueue<int, 8192>{1024}.max_capacity() == 8'388'608);
+    CHECK(Multiqueue<int, 100>{1}.max_capacity() == 100);
+    CHECK(Multiqueue<int, 100>{2}.max_capacity() == 200);
+    CHECK(Multiqueue<int, 100>{10}.max_capacity() == 1'000);
+    CHECK(Multiqueue<int, 1024>{1}.max_capacity() == 1'024);
+    CHECK(Multiqueue<int, 1024>{2}.max_capacity() == 2'048);
+    CHECK(Multiqueue<int, 1024>{10}.max_capacity() == 10'240);
+    CHECK(Multiqueue<int, 8192>{1024}.max_capacity() == 8'388'608);
   }
 
   TEST_CASE("Pushing elements (single queue)") {
@@ -120,7 +120,7 @@ TEST_SUITE("MultiQueue") {
   }
 
   TEST_CASE("Popping elements with work stealing") {
-    MultiQueue<unsigned int, 5> x{2};
+    Multiqueue<unsigned int, 5> x{2};
 
     for (unsigned int i = 0; i < (2 * x.max_queue_size()); i++) {
       REQUIRE(x.push(i));
