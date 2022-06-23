@@ -21,7 +21,8 @@ make
 
 # Functional requirements
 
-Requirements levels as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+Aside from the common-sense requirements for correct, efficient and thread-safe implementation, there are functional requirements.
+The following requirements levels are as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 ## MUST
 
@@ -29,14 +30,14 @@ Requirements levels as defined in [RFC 2119](https://www.ietf.org/rfc/rfc2119.tx
   * Class member functions,
   * Free functions,
   * Lambda expressions.
-* Support a configurable scheduling strategy.
+* Support a configurable scheduling strategy. (TODO)
 * Support the configuration of the amount of workers.
 
 ## SHOULD
 
-* Support the concept of task priority.
-* Support scheduling of automatic periodic tasks.
+* Support the concept of task priority. (TODO)
+* Support scheduling of automatic periodic tasks. (TODO)
 
 ## MAY
 
-* Support small object optimization for task objects.
+* Support small object optimization for task objects. (TODO)
