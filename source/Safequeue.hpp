@@ -7,15 +7,15 @@
 #include <shared_mutex>
 
 template<typename T, std::size_t MaxSize>
-requires((MaxSize > 0) && (MaxSize <= 8192)) class SafeQueue final {
+requires((MaxSize > 0) && (MaxSize <= 8192)) class Safequeue final {
   std::queue<T>             queue_;
   mutable std::shared_mutex mutex_;
 
 public:
-  SafeQueue() = default;
+  Safequeue() = default;
 
-  SafeQueue(SafeQueue& other) noexcept      = delete;
-  SafeQueue& operator=(SafeQueue&) noexcept = delete;
+  Safequeue(Safequeue& other) noexcept      = delete;
+  Safequeue& operator=(Safequeue&) noexcept = delete;
 
   [[nodiscard]] static constexpr std::size_t max_size() {
     return MaxSize;

@@ -7,11 +7,11 @@
 #include <stdexcept>
 #include <string>
 
-#include "SafeQueue.hpp"
+#include "Safequeue.hpp"
 
 template<typename T, std::size_t MaxQueueSize>
 class Multiqueue final {
-  using Queue     = SafeQueue<T, MaxQueueSize>;
+  using Queue     = Safequeue<T, MaxQueueSize>;
   using Queues    = std::deque<Queue>;
   using QueueIter = typename Queues::iterator;
 

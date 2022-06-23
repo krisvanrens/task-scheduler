@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/SafeQueue.hpp"
+#include "../source/Safequeue.hpp"
 
 #include <doctest/doctest.h>
 
@@ -12,9 +12,9 @@ struct MoveOnly {
   MoveOnly& operator=(MoveOnly&&) = default;
 };
 
-using Queue = SafeQueue<unsigned int, 10>;
+using Queue = Safequeue<unsigned int, 10>;
 
-TEST_SUITE("SafeQueue") {
+TEST_SUITE("Safequeue") {
   TEST_CASE("Default construction") {
     Queue x;
 
@@ -22,11 +22,11 @@ TEST_SUITE("SafeQueue") {
   }
 
   TEST_CASE("Get maximum length") {
-    CHECK(SafeQueue<int, 1>{}.max_size() == 1);
-    CHECK(SafeQueue<int, 2>{}.max_size() == 2);
-    CHECK(SafeQueue<int, 10>{}.max_size() == 10);
-    CHECK(SafeQueue<int, 100>{}.max_size() == 100);
-    CHECK(SafeQueue<int, 8192>{}.max_size() == 8192);
+    CHECK(Safequeue<int, 1>{}.max_size() == 1);
+    CHECK(Safequeue<int, 2>{}.max_size() == 2);
+    CHECK(Safequeue<int, 10>{}.max_size() == 10);
+    CHECK(Safequeue<int, 100>{}.max_size() == 100);
+    CHECK(Safequeue<int, 8192>{}.max_size() == 8192);
   }
 
   TEST_CASE("Get size") {
@@ -90,7 +90,7 @@ TEST_SUITE("SafeQueue") {
   }
 
   TEST_CASE("Move-only type handling") {
-    SafeQueue<MoveOnly, 3> x;
+    Safequeue<MoveOnly, 3> x;
 
     CHECK(x.push(MoveOnly{}));
     CHECK(x.push(MoveOnly{}));

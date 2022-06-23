@@ -24,9 +24,9 @@ target_link_libraries(
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_SafeQueue SafeQueue.cpp)
+add_executable(tests_Safequeue Safequeue.cpp)
 target_link_libraries(
-  tests_SafeQueue
+  tests_Safequeue
   PRIVATE
   project_warnings
   project_options
