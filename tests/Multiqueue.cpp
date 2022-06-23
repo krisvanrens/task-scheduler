@@ -53,11 +53,11 @@ TEST_SUITE("Multiqueue") {
     REQUIRE(x.max_capacity() == x.max_queue_size());
 
     for (unsigned int i = 0; i < x.max_queue_size(); i++) {
-      CHECK(x.push(42));
+      CHECK(x.push(42u));
     }
 
-    CHECK_FALSE(x.push(42));
-    CHECK_FALSE(x.push(42));
+    CHECK_FALSE(x.push(42u));
+    CHECK_FALSE(x.push(42u));
   }
 
   TEST_CASE("Pushing elements (multiple queues)") {
@@ -66,11 +66,11 @@ TEST_SUITE("Multiqueue") {
     REQUIRE(x.max_capacity() == 10 * x.max_queue_size());
 
     for (unsigned int i = 0; i < (10 * x.max_queue_size()); i++) {
-      CHECK(x.push(42));
+      CHECK(x.push(42u));
     }
 
-    CHECK_FALSE(x.push(42));
-    CHECK_FALSE(x.push(42));
+    CHECK_FALSE(x.push(42u));
+    CHECK_FALSE(x.push(42u));
   }
 
   TEST_CASE("Popping elements queue-indexed (single queue)") {

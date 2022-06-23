@@ -33,8 +33,8 @@ public:
   [[nodiscard]] static constexpr std::size_t max_queue_size();
   [[nodiscard]] constexpr std::size_t max_capacity() const;
 
-  [[nodiscard]] bool push(T&& element);
-  [[nodiscard]] bool push(T& element);
+  template<typename U>
+  [[nodiscard]] bool push(U&& element);
 
   [[nodiscard]] std::optional<T> pop(unsigned int index);
 };
@@ -87,17 +87,13 @@ constexpr std::size_t Multiqueue<T, MaxQueueSize>::max_capacity() const {
 }
 
 template<typename T, std::size_t MaxQueueSize>
-bool Multiqueue<T, MaxQueueSize>::push(T&& element) {
+template<typename U>
+bool Multiqueue<T, MaxQueueSize>::push(U&& element) {
   if (!advance_sink()) {
     return false;
   }
 
-  return sink_cursor_->push(std::forward<T>(element));
-}
-
-template<typename T, std::size_t MaxQueueSize>
-bool Multiqueue<T, MaxQueueSize>::push(T& element) {
-  return push(T{element});
+  return sink_cursor_->push(std::forward<U>(element));
 }
 
 template<typename T, std::size_t MaxQueueSize>
