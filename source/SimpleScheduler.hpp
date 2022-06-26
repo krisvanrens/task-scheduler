@@ -16,9 +16,13 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
   Multiqueue<Task<void()>, MaxQueueLength> queue_;
   std::vector<std::jthread>                executors_;
 
-  void executor(std::stop_token stop_token, [[maybe_unused]] unsigned int id) {
+  void executor(std::stop_token stop_token, unsigned int id) {
     while (!stop_token.stop_requested()) {
-      // TODO
+      if (auto&& task = queue_.pop(id); task) {
+        (*task)();
+      } else {
+        // TODO: Else: conditional wait..
+      }
     }
   }
 
@@ -29,7 +33,7 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
   }
 
 public:
-  SimpleScheduler(std::size_t num_executors)
+  explicit SimpleScheduler(std::size_t num_executors)
     : num_executors_{num_executors}
     , queue_{num_executors} {
     if (num_executors_ == 0) {
@@ -43,8 +47,8 @@ public:
     create_executors();
   }
 
-  SimpleScheduler(SimpleScheduler&&) noexcept            = default;
-  SimpleScheduler& operator=(SimpleScheduler&&) noexcept = default;
+  SimpleScheduler(const SimpleScheduler&) noexcept            = delete;
+  SimpleScheduler& operator=(const SimpleScheduler&) noexcept = delete;
 
   [[nodiscard]] constexpr std::size_t num_executors() const {
     return executors_.size();

@@ -3,8 +3,10 @@
 
 #include <doctest/doctest.h>
 
-#include <cstdio>
+#include <algorithm>
+#include <chrono>
 #include <stdexcept>
+#include <thread>
 #include <utility>
 
 #include "../source/Task.hpp"
@@ -21,58 +23,53 @@ TEST_SUITE("SimpleScheduler") {
     CHECK_THROWS_AS((SimpleScheduler<10>{100}), std::overflow_error);
   }
 
-  TEST_CASE("Move construction") {
-    SimpleScheduler<10> x{10};
-    SimpleScheduler<10> y{std::move(x)};
-  }
-
-  TEST_CASE("Move construction") {
-    SimpleScheduler<10> x{10};
-    SimpleScheduler<10> y{1};
-
-    y = std::move(x);
-  }
-
   TEST_CASE("Getting the number of executors") {
     CHECK(SimpleScheduler<10>{1}.num_executors() == 1);
     CHECK(SimpleScheduler<10>{2}.num_executors() == 2);
     CHECK(SimpleScheduler<10>{10}.num_executors() == 10);
   }
 
-#if 0
-  TEST_CASE("XXX") {
-    SimpleScheduler<3>::Job t1{[] { printf("t1!\n"); return 42; }};
-    SimpleScheduler<3>::Job t2{[] { printf("t2!\n"); return 42; }};
-    SimpleScheduler<3>::Job t3{[] { printf("t3!\n"); return 42; }};
-    SimpleScheduler<3>::Job t4{[] { printf("t4!\n"); return 42; }};
-    SimpleScheduler<3>::Job t5{[] { printf("t5!\n"); return 42; }};
-    SimpleScheduler<3>::Job t6{[] { printf("t6!\n"); return 42; }};
-    SimpleScheduler<3>::Job t7{[] { printf("t7!\n"); return 42; }};
+  TEST_CASE("Schedule jobs") {
+    std::array<bool, 6> call_status = {};
 
+    Task<void()> t0{[&] { call_status[0] = true; }};
+    Task<void()> t1{[&] { call_status[1] = true; }};
+    Task<void()> t2{[&] { call_status[2] = true; }};
+    Task<void()> t3{[&] { call_status[3] = true; }};
+    Task<void()> t4{[&] { call_status[4] = true; }};
+    Task<void()> t5{[&] { call_status[5] = true; }};
+    Task<void()> t6{[] {}};
+
+    REQUIRE(t0);
     REQUIRE(t1);
     REQUIRE(t2);
     REQUIRE(t3);
     REQUIRE(t4);
+    REQUIRE(t5);
 
-    SimpleScheduler<3> s1{2};
+    SimpleScheduler<3> s{2};
 
-    CHECK(s1.schedule(std::move(t1)));
-    CHECK(s1.schedule(std::move(t2)));
-    CHECK(s1.schedule(std::move(t3)));
-    CHECK(s1.schedule(std::move(t4)));
-    CHECK(s1.schedule(std::move(t5)));
-    CHECK(s1.schedule(std::move(t6)));
+    CHECK(s.schedule(std::move(t0)));
+    CHECK(s.schedule(std::move(t1)));
+    CHECK(s.schedule(std::move(t2)));
+    CHECK(s.schedule(std::move(t3)));
+    CHECK(s.schedule(std::move(t4)));
+    CHECK(s.schedule(std::move(t5)));
 
+    CHECK(!t0);
     CHECK(!t1);
     CHECK(!t2);
     CHECK(!t3);
     CHECK(!t4);
     CHECK(!t5);
-    CHECK(!t6);
 
-    CHECK(!s1.schedule(std::move(t7)));
-    CHECK(t7);
+    CHECK(!s.schedule(std::move(t6)));
+    CHECK(t6);
+
+    // Wait until all tasks are flushed.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
-#endif
 
 } // TEST_SUITE
