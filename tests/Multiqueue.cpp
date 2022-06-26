@@ -21,14 +21,24 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Move construction") {
-    Queue x1{4};
-    Queue x2{std::move(x1)};
+    Queue x{4};
+
+    REQUIRE(x.num_queues() == 4);
+
+    Queue y{std::move(x)};
+
+    CHECK(y.num_queues() == 4);
   }
 
   TEST_CASE("Move assignment") {
-    Queue x1{4}, x2{2};
+    Queue x{4}, y{2};
 
-    x2 = std::move(x1);
+    REQUIRE(x.num_queues() == 4);
+    REQUIRE(y.num_queues() == 2);
+
+    y = std::move(x);
+
+    CHECK(y.num_queues() == 4);
   }
 
   TEST_CASE("Getting the maximum queue size") {
