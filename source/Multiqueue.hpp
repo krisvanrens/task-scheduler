@@ -61,6 +61,10 @@ public:
     return MaxQueueSize;
   }
 
+  [[nodiscard]] constexpr std::size_t num_queues() const {
+    return queues_.size();
+  }
+
   [[nodiscard]] constexpr std::size_t max_capacity() const {
     return queues_.size() * MaxQueueSize;
   }

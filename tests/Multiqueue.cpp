@@ -37,6 +37,12 @@ TEST_SUITE("Multiqueue") {
     CHECK(Multiqueue<int, 10>{1}.max_queue_size() == 10);
   }
 
+  TEST_CASE("Getting the number of queues") {
+    CHECK(Multiqueue<int, 1>{1}.num_queues() == 1);
+    CHECK(Multiqueue<int, 1>{2}.num_queues() == 2);
+    CHECK(Multiqueue<int, 1>{10}.num_queues() == 10);
+  }
+
   TEST_CASE("Getting the maximum capacity") {
     CHECK(Multiqueue<int, 100>{1}.max_capacity() == 100);
     CHECK(Multiqueue<int, 100>{2}.max_capacity() == 200);
