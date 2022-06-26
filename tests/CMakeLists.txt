@@ -32,9 +32,9 @@ target_link_libraries(
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_Scheduler Scheduler.cpp)
+add_executable(tests_SimpleScheduler SimpleScheduler.cpp)
 target_link_libraries(
-  tests_Scheduler
+  tests_SimpleScheduler
   PRIVATE
   project_warnings
   project_options
