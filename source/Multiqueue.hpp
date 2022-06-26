@@ -31,7 +31,7 @@ class Multiqueue final {
   }
 
   [[nodiscard]] bool advance_sink() {
-    unsigned int advance_count = 0;
+    std::size_t advance_count = 0;
     do {
       advance_sink_cursor();
     } while (is_current_sink_full() && (advance_count++ < queues_.size()));
@@ -40,7 +40,7 @@ class Multiqueue final {
   }
 
 public:
-  Multiqueue(unsigned int num_queues) {
+  Multiqueue(std::size_t num_queues) {
     if (num_queues == 0) {
       throw std::underflow_error("Number of queues must be non-zero");
     }
@@ -78,15 +78,15 @@ public:
     return sink_cursor_->push(std::forward<U>(element));
   }
 
-  [[nodiscard]] std::optional<T> pop(unsigned int index) {
+  [[nodiscard]] std::optional<T> pop(std::size_t index) {
     if (index >= queues_.size()) {
       throw std::out_of_range("Queue index out of range");
     }
 
-    QueueIter source = queues_.begin() + index;
+    QueueIter source = queues_.begin() + static_cast<typename Queues::difference_type>(index);
 
     if (source->empty()) {
-      unsigned int advance_count = 0;
+      std::size_t advance_count = 0;
       do {
         source++;
 
