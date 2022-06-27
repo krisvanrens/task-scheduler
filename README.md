@@ -30,13 +30,16 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
   * Class member functions,
   * Free functions,
   * Lambda expressions.
-* Support a configurable scheduling strategy. (TODO)
 * Support the configuration of the amount of workers.
+* Support the configuration of the work queue length.
+* Support deferred returning of task results. (TODO)
 
 ## SHOULD
 
 * Support the concept of task priority. (TODO)
 * Support scheduling of automatic periodic tasks. (TODO)
+* Support a configurable scheduling strategy. (TODO)
+* Support a mode that keeps a strict task order. (TODO)
 
 ## MAY
 
