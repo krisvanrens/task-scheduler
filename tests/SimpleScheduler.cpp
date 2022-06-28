@@ -4,6 +4,7 @@
 #include <doctest/doctest.h>
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <stdexcept>
 #include <thread>
@@ -72,6 +73,23 @@ TEST_SUITE("SimpleScheduler") {
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
 
+  TEST_CASE("Schedule a local callback") {
+    std::atomic<unsigned int> count = 0;
+
+    const auto callback = [&] { count++; };
+
+    SimpleScheduler<2> s{2};
+
+    REQUIRE(s.schedule([&] { callback(); }));
+    REQUIRE(s.schedule([&] { callback(); }));
+    REQUIRE(s.schedule([&] { callback(); }));
+    REQUIRE(s.schedule([&] { callback(); }));
+
+    // Wait until (hopefully) all tasks are flushed.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    CHECK(count == 4);
+  }
 
   TEST_CASE("Flush scheduler") {
     const auto timeStart = std::chrono::system_clock::now();
