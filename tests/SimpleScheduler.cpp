@@ -72,4 +72,29 @@ TEST_SUITE("SimpleScheduler") {
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
 
+
+  TEST_CASE("Flush scheduler") {
+    const auto timeStart = std::chrono::system_clock::now();
+
+    {
+      SimpleScheduler<3> s{1};
+
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); }));
+
+      // Wait until first task is taken on.
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
+
+      s.flush();
+    }
+
+    const auto timeEnd = std::chrono::system_clock::now();
+
+    CHECK(std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() < 200);
+  }
+
 } // TEST_SUITE

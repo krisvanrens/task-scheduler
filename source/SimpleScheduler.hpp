@@ -57,4 +57,8 @@ public:
   [[nodiscard]] bool schedule(Task<void()>&& task) {
     return queue_.push(std::move(task));
   }
+
+  void flush() {
+    queue_.flush();
+  }
 };
