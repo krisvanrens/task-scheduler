@@ -108,4 +108,10 @@ public:
 
     return source->pop();
   }
+
+  void flush() {
+    for (auto& queue : queues_) {
+      queue.flush();
+    }
+  }
 };

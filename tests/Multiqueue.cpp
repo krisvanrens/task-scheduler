@@ -205,4 +205,22 @@ TEST_SUITE("Multiqueue") {
     CHECK_FALSE(x.pop(1).has_value());
   }
 
+  TEST_CASE("Flushing the queue") {
+    Multiqueue<unsigned int, 5> x{2};
+
+    REQUIRE(x.empty());
+
+    for (unsigned int i = 0; i < (2 * x.max_queue_size()); i++) {
+      REQUIRE(x.push(i));
+    }
+
+    REQUIRE_FALSE(x.empty());
+    REQUIRE(x.size() == (2 * x.max_queue_size()));
+
+    x.flush();
+
+    CHECK(x.empty());
+    CHECK(x.size() == 0);
+  }
+
 } // TEST_SUITE
