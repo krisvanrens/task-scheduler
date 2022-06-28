@@ -66,7 +66,7 @@ TEST_SUITE("SimpleScheduler") {
     CHECK(!s.schedule(std::move(t6)));
     CHECK(t6);
 
-    // Wait until all tasks are flushed.
+    // Wait until (hopefully) all tasks are flushed.
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
