@@ -63,6 +63,16 @@ TEST_SUITE("Multiqueue") {
     CHECK(Multiqueue<int, 8192>{1024}.max_capacity() == 8'388'608);
   }
 
+  TEST_CASE("Getting the empty state") {
+    Queue x{1};
+
+    CHECK(x.empty());
+
+    CHECK(x.push(42u));
+
+    CHECK_FALSE(x.empty());
+  }
+
   TEST_CASE("Pushing elements (single queue)") {
     Queue x{1};
 

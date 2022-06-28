@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <deque>
 #include <optional>
@@ -67,6 +68,10 @@ public:
 
   [[nodiscard]] constexpr std::size_t max_capacity() const {
     return queues_.size() * MaxQueueSize;
+  }
+
+  [[nodiscard]] bool empty() const {
+    return std::all_of(queues_.begin(), queues_.end(), [](const auto& queue) { return queue.empty(); });
   }
 
   template<typename U>
