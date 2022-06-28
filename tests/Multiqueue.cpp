@@ -73,6 +73,30 @@ TEST_SUITE("Multiqueue") {
     CHECK_FALSE(x.empty());
   }
 
+  TEST_CASE("Getting the size (single queue)") {
+    Queue x{1};
+
+    REQUIRE(x.max_capacity() == x.max_queue_size());
+
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
+      CHECK(x.size() == i);
+      REQUIRE(x.push(42u));
+      CHECK(x.size() == (i + 1));
+    }
+  }
+
+  TEST_CASE("Getting the size (multiple queues)") {
+    Queue x{10};
+
+    REQUIRE(x.max_capacity() == 10 * x.max_queue_size());
+
+    for (unsigned int i = 0; i < x.max_queue_size(); i++) {
+      CHECK(x.size() == i);
+      REQUIRE(x.push(42u));
+      CHECK(x.size() == (i + 1));
+    }
+  }
+
   TEST_CASE("Pushing elements (single queue)") {
     Queue x{1};
 
