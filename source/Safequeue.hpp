@@ -1,14 +1,14 @@
 #pragma once
 
 #include <cstddef>
+#include <deque>
 #include <mutex>
 #include <optional>
-#include <queue>
 #include <shared_mutex>
 
 template<typename T, std::size_t MaxSize>
 requires((MaxSize > 0) && (MaxSize <= 8192)) class Safequeue final {
-  std::queue<T>             queue_;
+  std::deque<T>             queue_;
   mutable std::shared_mutex mutex_;
 
 public:
@@ -41,7 +41,7 @@ public:
       return false;
     }
 
-    queue_.push(std::forward<U>(element));
+    queue_.push_back(std::forward<U>(element));
 
     return true;
   }
@@ -55,7 +55,7 @@ public:
     }
 
     result = std::move(queue_.front());
-    queue_.pop();
+    queue_.pop_front();
 
     return result;
   }
