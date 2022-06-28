@@ -107,4 +107,20 @@ TEST_SUITE("Safequeue") {
     pop();
   }
 
+  TEST_CASE("Flushing the queue") {
+    Queue x;
+
+    for (unsigned int i = 0; i < 10; i++) {
+      REQUIRE(x.size() == i);
+      REQUIRE(x.push(i));
+    }
+
+    REQUIRE_FALSE(x.empty());
+    REQUIRE(x.size() == 10);
+
+    x.flush();
+
+    CHECK(x.empty());
+  }
+
 } // TEST_SUITE

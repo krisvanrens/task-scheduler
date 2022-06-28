@@ -59,4 +59,9 @@ public:
 
     return result;
   }
+
+  void flush() {
+    std::unique_lock lock{mutex_};
+    queue_.clear();
+  }
 };
