@@ -29,7 +29,7 @@ TEST_SUITE("CompletionData") {
 
 TEST_SUITE("CompletionToken") {
   TEST_CASE("Construction") {
-    auto d = std::make_shared<detail::CompletionData>();
+    auto            d = std::make_shared<detail::CompletionData>();
     CompletionToken t{d};
 
     CHECK_FALSE(t);
@@ -38,12 +38,12 @@ TEST_SUITE("CompletionToken") {
   TEST_CASE("Completion handling") {
     using namespace std::chrono;
 
-    auto data = std::make_shared<detail::CompletionData>();
+    auto            data = std::make_shared<detail::CompletionData>();
     CompletionToken t{data};
 
     CHECK_FALSE(t);
 
-    std::jthread th{[&data]{
+    std::jthread th{[&data] {
       std::this_thread::sleep_for(milliseconds(100));
       data->trigger_completion();
     }};

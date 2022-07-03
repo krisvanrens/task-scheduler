@@ -8,9 +8,9 @@
 namespace detail {
 
 class CompletionData final {
-  mutable std::mutex mutex_;
+  mutable std::mutex      mutex_;
   std::condition_variable condition_;
-  bool completed_ = false;
+  bool                    completed_ = false;
 
 public:
   [[nodiscard]] bool is_completed() const {
@@ -20,7 +20,7 @@ public:
 
   void wait_for_completion() {
     std::unique_lock lock{mutex_};
-    condition_.wait(lock, [this]{ return this->completed_; });
+    condition_.wait(lock, [this] { return this->completed_; });
   }
 
   void trigger_completion() {
