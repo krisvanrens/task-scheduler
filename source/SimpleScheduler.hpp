@@ -2,24 +2,34 @@
 
 #include <condition_variable>
 #include <functional>
+#include <memory>
 #include <mutex>
+#include <optional>
 #include <stdexcept>
 #include <thread>
+#include <utility>
 #include <vector>
 
+#include "CompletionToken.hpp"
 #include "Multiqueue.hpp"
 #include "Task.hpp"
 
 template<unsigned int MaxQueueLength>
 requires(MaxQueueLength < 8192) class SimpleScheduler final {
-  std::size_t                              num_executors_;
-  Multiqueue<Task<void()>, MaxQueueLength> queue_;
-  std::vector<std::jthread>                executors_;
+  struct Job {
+    Task<void()>                            task_;
+    std::shared_ptr<detail::CompletionData> completion_;
+  };
+
+  std::size_t                     num_executors_;
+  Multiqueue<Job, MaxQueueLength> queue_;
+  std::vector<std::jthread>       executors_;
 
   void executor(std::stop_token stop_token, unsigned int id) {
     while (!stop_token.stop_requested()) {
-      if (auto&& task = queue_.pop(id); task) {
-        (*task)();
+      if (auto&& job = queue_.pop(id); job) {
+        (*job).task_();
+        (*job).completion_->trigger_completion();
       } else {
         // TODO: Else: conditional wait..
       }
@@ -54,8 +64,17 @@ public:
     return executors_.size();
   }
 
-  [[nodiscard]] bool schedule(Task<void()>&& task) {
-    return queue_.push(std::move(task));
+  [[nodiscard]] std::optional<CompletionToken> schedule(Task<void()>&& task) {
+    auto completion = std::make_shared<detail::CompletionData>();
+    auto job = Job{std::move(task), completion};
+
+    if (queue_.push(std::move(job))) {
+      return CompletionToken{completion};
+    } else {
+      task = std::move(job.task_); // Hand back the task.
+    }
+
+    return {};
   }
 
   void flush() {
