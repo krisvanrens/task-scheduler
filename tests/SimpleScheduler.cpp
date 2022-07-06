@@ -50,25 +50,32 @@ TEST_SUITE("SimpleScheduler") {
 
     SimpleScheduler<3> s{2};
 
-    CHECK(s.schedule(std::move(t0)));
-    CHECK(s.schedule(std::move(t1)));
-    CHECK(s.schedule(std::move(t2)));
-    CHECK(s.schedule(std::move(t3)));
-    CHECK(s.schedule(std::move(t4)));
-    CHECK(s.schedule(std::move(t5)));
+    const auto check_schedule = [&] (auto&& task) {
+      auto result = s.schedule(std::move(task));
 
-    CHECK(!t0);
-    CHECK(!t1);
-    CHECK(!t2);
-    CHECK(!t3);
-    CHECK(!t4);
-    CHECK(!t5);
+      CHECK(result);
+      CHECK_FALSE(*result);
+      CHECK_FALSE(task);
 
-    CHECK(!s.schedule(std::move(t6)));
-    CHECK(t6);
+      return result.value();
+    };
+
+    auto token0 = check_schedule(std::move(t0));
+    auto token1 = check_schedule(std::move(t1));
+    auto token2 = check_schedule(std::move(t2));
+    auto token3 = check_schedule(std::move(t3));
+    auto token4 = check_schedule(std::move(t4));
+    auto token5 = check_schedule(std::move(t5));
 
     // Wait until (hopefully) all tasks are flushed.
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    CHECK(token0);
+    CHECK(token1);
+    CHECK(token2);
+    CHECK(token3);
+    CHECK(token4);
+    CHECK(token5);
 
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
@@ -101,7 +108,6 @@ TEST_SUITE("SimpleScheduler") {
 
       // Wait until first task is taken on.
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
 
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));

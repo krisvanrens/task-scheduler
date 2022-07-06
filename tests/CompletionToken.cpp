@@ -29,8 +29,7 @@ TEST_SUITE("CompletionData") {
 
 TEST_SUITE("CompletionToken") {
   TEST_CASE("Construction") {
-    auto            d = std::make_shared<detail::CompletionData>();
-    CompletionToken t{d};
+    CompletionToken t{std::make_shared<detail::CompletionData>()};
 
     CHECK_FALSE(t);
   }
