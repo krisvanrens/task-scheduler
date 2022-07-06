@@ -66,7 +66,7 @@ public:
 
   [[nodiscard]] std::optional<CompletionToken> schedule(Task<void()>&& task) {
     auto completion = std::make_shared<detail::CompletionData>();
-    auto job = Job{std::move(task), completion};
+    auto job        = Job{std::move(task), completion};
 
     if (queue_.push(std::move(job))) {
       return CompletionToken{completion};

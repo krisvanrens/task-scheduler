@@ -50,7 +50,7 @@ TEST_SUITE("SimpleScheduler") {
 
     SimpleScheduler<3> s{2};
 
-    const auto check_schedule = [&] (auto&& task) {
+    const auto check_schedule = [&](auto&& task) {
       auto result = s.schedule(std::move(task));
 
       CHECK(result);
