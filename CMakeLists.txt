@@ -42,6 +42,7 @@ include(cmake/StaticAnalyzers.cmake)
 
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" ON)
+option(ENABLE_BENCHMARKING "Enable Benchmark Builds" ON)
 
 # Set up some extra Conan dependencies based on our needs before loading Conan
 set(CONAN_EXTRA_REQUIRES "")
@@ -52,6 +53,10 @@ run_conan()
 
 if(ENABLE_TESTING)
   add_subdirectory(tests)
+endif()
+
+if(ENABLE_BENCHMARKING)
+  add_subdirectory(benches)
 endif()
 
 add_subdirectory(source)

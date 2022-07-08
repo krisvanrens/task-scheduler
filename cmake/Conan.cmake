@@ -17,6 +17,7 @@ macro(run_conan)
     REQUIRES
     ${CONAN_EXTRA_REQUIRES}
     doctest/2.4.8
+    benchmark/1.6.1
     OPTIONS
     ${CONAN_EXTRA_OPTIONS}
     BASIC_SETUP
