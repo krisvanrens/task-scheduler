@@ -2,15 +2,24 @@
 
 #include <cstddef>
 #include <deque>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <shared_mutex>
+#include <utility>
+
+static constexpr std::size_t MAX_SIZE_LIMIT = 8192;
+
+// TODO: Find a nicer way to do this. I'd like the maximum size to be part of the class template,
+//        but that always requires the template parameters to be provided. At least a namespace
+//        would be nice.
+static constexpr std::size_t Safequeue_max_size_limit = MAX_SIZE_LIMIT;
 
 /**
  * Thread-safe queue with direct pop-result support.
  */
 template<typename T, std::size_t MaxSize>
-requires((MaxSize > 0) && (MaxSize <= 8192)) class Safequeue final {
+requires((MaxSize > 0) && (MaxSize <= MAX_SIZE_LIMIT)) class Safequeue final {
   std::deque<T>             queue_;
   mutable std::shared_mutex mutex_;
 
@@ -20,7 +29,11 @@ public:
   Safequeue(Safequeue& other) noexcept      = delete;
   Safequeue& operator=(Safequeue&) noexcept = delete;
 
-  [[nodiscard]] static constexpr std::size_t max_size() {
+  [[nodiscard]] static constexpr std::size_t max_size_limit() noexcept {
+    return MAX_SIZE_LIMIT;
+  }
+
+  [[nodiscard]] static constexpr std::size_t max_size() noexcept {
     return MaxSize;
   }
 
