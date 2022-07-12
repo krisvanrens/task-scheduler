@@ -14,6 +14,12 @@
 #include "Multiqueue.hpp"
 #include "Task.hpp"
 
+/**
+ * Simple scheduler. A thread pool with an associated work queue per executor. This scheduler is able to handle tasks
+ *  with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A Multiqueue is used
+ *  to implement work stealing for executors: when their respective work queue is empty, work is taken from another
+ *  executors' queue. At schedule time, a completion token is returned for the callee to wait on task completion.
+ */
 template<unsigned int MaxQueueLength>
 requires(MaxQueueLength < 8192) class SimpleScheduler final {
   struct Job {
@@ -71,7 +77,7 @@ public:
     if (queue_.push(std::move(job))) {
       return CompletionToken{completion};
     } else {
-      task = std::move(job.task_); // Hand back the task.
+      task = std::move(job.task_); // Hand back the task in case the scheduling failed.
     }
 
     return {};

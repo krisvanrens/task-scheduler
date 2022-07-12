@@ -8,7 +8,7 @@ Requirements:
 
 * Conan (for building the tests),
 * GCC v12 or higher, or Clang v13 or higher,
-* Clang-format v13 or higher,
+* Clang-format v14 or higher,
 
 Instructions:
 
@@ -32,7 +32,7 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
   * Lambda expressions.
 * Support the configuration of the amount of workers.
 * Support the configuration of the work queue length.
-* Support deferred returning of task results. (TODO)
+* Support deferred return value propagation for task results. (TODO)
 
 ## SHOULD
 

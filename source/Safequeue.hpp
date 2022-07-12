@@ -6,6 +6,9 @@
 #include <optional>
 #include <shared_mutex>
 
+/**
+ * Thread-safe queue with direct pop-result support.
+ */
 template<typename T, std::size_t MaxSize>
 requires((MaxSize > 0) && (MaxSize <= 8192)) class Safequeue final {
   std::deque<T>             queue_;

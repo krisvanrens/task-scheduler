@@ -11,6 +11,11 @@
 
 #include "Safequeue.hpp"
 
+/**
+ * Array of thread-safe queues. This type features an API similar to a single queue. For any item push, the load is
+ *  uniformly distributed over the internal queues. The pop call is called with an index to indicate the internal queue
+ *  index. However, when the indexed queue is empty, data is 'stolen' from the next non-empty queue.
+ */
 template<typename T, std::size_t MaxQueueSize>
 class Multiqueue final {
   using Queue     = Safequeue<T, MaxQueueSize>;
