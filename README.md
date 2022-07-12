@@ -44,3 +44,7 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
 ## MAY
 
 * Support small object optimization for task objects. (TODO)
+
+# License
+
+This project is licensed under the [Boost Software License 1.0](https://choosealicense.com/licenses/bsl-1.0/).
