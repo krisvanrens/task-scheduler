@@ -30,6 +30,8 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
   std::size_t                     num_executors_;
   Multiqueue<Job, MaxQueueLength> queue_;
   std::vector<std::jthread>       executors_;
+  std::mutex                      work_mutex_;
+  std::condition_variable         work_cv_;
 
   void executor(std::stop_token stop_token, unsigned int id) {
     while (!stop_token.stop_requested()) {
@@ -37,7 +39,8 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
         (*job).task_();
         (*job).completion_->trigger_completion();
       } else {
-        // TODO: Else: conditional wait..
+        std::unique_lock lock{work_mutex_};
+        work_cv_.wait(lock, [&] { return !queue_.empty() | stop_token.stop_requested(); });
       }
     }
   }
@@ -63,6 +66,14 @@ public:
     create_executors();
   }
 
+  ~SimpleScheduler() {
+    for (auto& executor : executors_) {
+      executor.request_stop();
+    }
+
+    work_cv_.notify_all();
+  }
+
   SimpleScheduler(const SimpleScheduler&) noexcept            = delete;
   SimpleScheduler& operator=(const SimpleScheduler&) noexcept = delete;
 
@@ -75,6 +86,7 @@ public:
     auto job        = Job{std::move(task), completion};
 
     if (queue_.push(std::move(job))) {
+      work_cv_.notify_one();
       return CompletionToken{completion};
     } else {
       task = std::move(job.task_); // Hand back the task in case the scheduling failed.
