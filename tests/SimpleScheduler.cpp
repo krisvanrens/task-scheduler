@@ -12,25 +12,26 @@
 
 #include "../source/Task.hpp"
 
+const auto NUM_CORES = std::thread::hardware_concurrency();
+
 TEST_SUITE("SimpleScheduler") {
   TEST_CASE("Construction") {
     SimpleScheduler<1>   s1{1};
     SimpleScheduler<10>  s2{1};
-    SimpleScheduler<100> s3{10};
+    SimpleScheduler<100> s3{NUM_CORES};
   }
 
   TEST_CASE("Construction (failure cases)") {
     CHECK_THROWS_AS((SimpleScheduler<10>{0}), std::underflow_error);
-    CHECK_THROWS_AS((SimpleScheduler<10>{100}), std::overflow_error);
+    CHECK_THROWS_AS((SimpleScheduler<10>{1024}), std::overflow_error);
   }
 
   TEST_CASE("Getting the number of executors") {
     CHECK(SimpleScheduler<10>{1}.num_executors() == 1);
-    CHECK(SimpleScheduler<10>{2}.num_executors() == 2);
-    CHECK(SimpleScheduler<10>{10}.num_executors() == 10);
+    CHECK(SimpleScheduler<10>{NUM_CORES}.num_executors() == NUM_CORES);
   }
 
-  TEST_CASE("Schedule jobs") {
+  TEST_CASE("Schedule jobs" * doctest::skip(NUM_CORES < 2)) {
     std::array<bool, 6> call_status = {};
 
     Task<void()> t0{[&] { call_status[0] = true; }};
@@ -80,7 +81,7 @@ TEST_SUITE("SimpleScheduler") {
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
 
-  TEST_CASE("Schedule a local callback") {
+  TEST_CASE("Schedule a local callback" * doctest::skip(NUM_CORES < 2)) {
     std::atomic<unsigned int> count = 0;
 
     const auto callback = [&] { count++; };
@@ -98,7 +99,7 @@ TEST_SUITE("SimpleScheduler") {
     CHECK(count == 4);
   }
 
-  TEST_CASE("Flush scheduler") {
+  TEST_CASE("Flush scheduler" * doctest::timeout(1)) {
     const auto timeStart = std::chrono::system_clock::now();
 
     {
