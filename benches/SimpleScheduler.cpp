@@ -3,6 +3,7 @@
 #include <benchmark/benchmark.h>
 
 #include <cstddef>
+#include <thread>
 
 static constexpr std::size_t QUEUE_LENGTH = 100;
 
@@ -27,7 +28,7 @@ static void BM_ScheduleWork(benchmark::State& state) {
   }
 }
 
-BENCHMARK(BM_Construction)->RangeMultiplier(2)->Range(1, 16);
-BENCHMARK(BM_ScheduleWork)->RangeMultiplier(2)->Range(1, 16);
+BENCHMARK(BM_Construction)->RangeMultiplier(2)->Range(1, std::thread::hardware_concurrency());
+BENCHMARK(BM_ScheduleWork)->RangeMultiplier(2)->Range(1, std::thread::hardware_concurrency());
 
 BENCHMARK_MAIN();
