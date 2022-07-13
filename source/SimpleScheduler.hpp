@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <condition_variable>
 #include <functional>
 #include <latch>
@@ -74,10 +75,7 @@ public:
   }
 
   ~SimpleScheduler() {
-    for (auto& executor : executors_) {
-      executor.request_stop();
-    }
-
+    std::ranges::for_each(executors_, [](auto& executor) { executor.request_stop(); });
     work_cv_.notify_all();
   }
 
