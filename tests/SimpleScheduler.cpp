@@ -12,6 +12,8 @@
 
 #include "../source/Task.hpp"
 
+using namespace std::chrono_literals;
+
 const auto NUM_CORES = std::thread::hardware_concurrency();
 
 TEST_SUITE("SimpleScheduler") {
@@ -34,12 +36,30 @@ TEST_SUITE("SimpleScheduler") {
   TEST_CASE("Schedule jobs" * doctest::skip(NUM_CORES < 2)) {
     std::array<bool, 6> call_status = {};
 
-    Task<void()> t0{[&] { call_status[0] = true; }};
-    Task<void()> t1{[&] { call_status[1] = true; }};
-    Task<void()> t2{[&] { call_status[2] = true; }};
-    Task<void()> t3{[&] { call_status[3] = true; }};
-    Task<void()> t4{[&] { call_status[4] = true; }};
-    Task<void()> t5{[&] { call_status[5] = true; }};
+    Task<void()> t0{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[0] = true;
+    }};
+    Task<void()> t1{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[1] = true;
+    }};
+    Task<void()> t2{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[2] = true;
+    }};
+    Task<void()> t3{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[3] = true;
+    }};
+    Task<void()> t4{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[4] = true;
+    }};
+    Task<void()> t5{[&] {
+      std::this_thread::sleep_for(10ms);
+      call_status[5] = true;
+    }};
     Task<void()> t6{[] {}};
 
     REQUIRE(t0);
@@ -52,13 +72,13 @@ TEST_SUITE("SimpleScheduler") {
     SimpleScheduler<3> s{2};
 
     const auto check_schedule = [&](auto&& task) {
-      auto result = s.schedule(std::move(task));
+      auto completion = s.schedule(std::move(task));
 
-      CHECK(result);
-      CHECK_FALSE(*result);
+      CHECK(completion);
       CHECK_FALSE(task);
+      CHECK_FALSE(*completion);
 
-      return result.value();
+      return completion.value();
     };
 
     auto token0 = check_schedule(std::move(t0));
@@ -69,7 +89,7 @@ TEST_SUITE("SimpleScheduler") {
     auto token5 = check_schedule(std::move(t5));
 
     // Wait until (hopefully) all tasks are flushed.
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(100ms);
 
     CHECK(token0);
     CHECK(token1);
@@ -94,7 +114,7 @@ TEST_SUITE("SimpleScheduler") {
     REQUIRE(s.schedule([&] { callback(); }));
 
     // Wait until (hopefully) all tasks are flushed.
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(100ms);
 
     CHECK(count == 4);
   }
@@ -105,21 +125,21 @@ TEST_SUITE("SimpleScheduler") {
     {
       SimpleScheduler<3> s{1};
 
-      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::milliseconds(100)); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(100ms); }));
 
       // Wait until first task is taken on.
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
-      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
-      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(std::chrono::seconds(1)); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(1s); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(1s); }));
+      REQUIRE(s.schedule([&] { std::this_thread::sleep_for(1s); }));
 
       s.flush();
     }
 
     const auto timeEnd = std::chrono::system_clock::now();
 
-    CHECK(std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count() < 200);
+    CHECK((timeEnd - timeStart) < 200ms);
   }
 
 } // TEST_SUITE
