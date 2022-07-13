@@ -94,7 +94,7 @@ public:
       work_cv_.notify_one();
       return CompletionToken{completion};
     } else {
-      task = std::move(job.task_); // Hand back the task in case the scheduling failed.
+      task = std::move(job.task_); // Hand back the task in case scheduling failed.
     }
 
     return {};
