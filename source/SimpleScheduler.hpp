@@ -44,7 +44,7 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
         (*job).completion_->trigger_completion();
       } else {
         std::unique_lock lock{work_mutex_};
-        work_cv_.wait(lock, [&] { return !queue_.empty() | stop_token.stop_requested(); });
+        work_cv_.wait(lock, [&] { return !queue_.empty() || stop_token.stop_requested(); });
       }
     }
   }
