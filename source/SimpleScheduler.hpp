@@ -2,6 +2,7 @@
 
 #include <condition_variable>
 #include <functional>
+#include <latch>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -30,10 +31,13 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
   std::size_t                     num_executors_;
   Multiqueue<Job, MaxQueueLength> queue_;
   std::vector<std::jthread>       executors_;
+  std::latch                      executors_started_;
   std::mutex                      work_mutex_;
   std::condition_variable         work_cv_;
 
   void executor(std::stop_token stop_token, unsigned int id) {
+    executors_started_.arrive_and_wait();
+
     while (!stop_token.stop_requested()) {
       if (auto&& job = queue_.pop(id); job) {
         (*job).task_();
@@ -49,12 +53,15 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
     for (unsigned int i = 0; i < static_cast<unsigned int>(num_executors_); i++) {
       executors_.emplace_back(std::bind_front(&SimpleScheduler<MaxQueueLength>::executor, this), i);
     }
+
+    executors_started_.arrive_and_wait();
   }
 
 public:
   explicit SimpleScheduler(std::size_t num_executors)
     : num_executors_{num_executors}
-    , queue_{num_executors} {
+    , queue_{num_executors}
+    , executors_started_{static_cast<std::ptrdiff_t>(num_executors + 1)} { // +1 for the main thread.
     if (num_executors_ == 0) {
       throw std::underflow_error("At least one executor must be requested");
     }
