@@ -34,42 +34,34 @@ TEST_SUITE("SimpleScheduler") {
   }
 
   TEST_CASE("Schedule jobs" * doctest::skip(NUM_CORES < 2)) {
-    std::array<bool, 6> call_status = {};
+    std::array<bool, 4> call_status = {};
 
     Task<void()> t0{[&] {
-      std::this_thread::sleep_for(10ms);
+      std::this_thread::sleep_for(20ms);
       call_status[0] = true;
     }};
+
     Task<void()> t1{[&] {
-      std::this_thread::sleep_for(10ms);
+      std::this_thread::sleep_for(20ms);
       call_status[1] = true;
     }};
+
     Task<void()> t2{[&] {
-      std::this_thread::sleep_for(10ms);
+      std::this_thread::sleep_for(20ms);
       call_status[2] = true;
     }};
+
     Task<void()> t3{[&] {
-      std::this_thread::sleep_for(10ms);
+      std::this_thread::sleep_for(20ms);
       call_status[3] = true;
     }};
-    Task<void()> t4{[&] {
-      std::this_thread::sleep_for(10ms);
-      call_status[4] = true;
-    }};
-    Task<void()> t5{[&] {
-      std::this_thread::sleep_for(10ms);
-      call_status[5] = true;
-    }};
-    Task<void()> t6{[] {}};
 
     REQUIRE(t0);
     REQUIRE(t1);
     REQUIRE(t2);
     REQUIRE(t3);
-    REQUIRE(t4);
-    REQUIRE(t5);
 
-    SimpleScheduler<3> s{2};
+    SimpleScheduler<2> s{2};
 
     const auto check_schedule = [&](auto&& task) {
       auto completion = s.schedule(std::move(task));
@@ -81,22 +73,18 @@ TEST_SUITE("SimpleScheduler") {
       return completion.value();
     };
 
-    auto token0 = check_schedule(std::move(t0));
-    auto token1 = check_schedule(std::move(t1));
-    auto token2 = check_schedule(std::move(t2));
-    auto token3 = check_schedule(std::move(t3));
-    auto token4 = check_schedule(std::move(t4));
-    auto token5 = check_schedule(std::move(t5));
+    auto completion0 = check_schedule(std::move(t0));
+    auto completion1 = check_schedule(std::move(t1));
+    auto completion2 = check_schedule(std::move(t2));
+    auto completion3 = check_schedule(std::move(t3));
 
     // Wait until (hopefully) all tasks are flushed.
     std::this_thread::sleep_for(100ms);
 
-    CHECK(token0);
-    CHECK(token1);
-    CHECK(token2);
-    CHECK(token3);
-    CHECK(token4);
-    CHECK(token5);
+    CHECK(completion0);
+    CHECK(completion1);
+    CHECK(completion2);
+    CHECK(completion3);
 
     CHECK(std::all_of(call_status.begin(), call_status.end(), [](bool status) { return status; }));
   }
@@ -128,7 +116,7 @@ TEST_SUITE("SimpleScheduler") {
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(100ms); }));
 
       // Wait until first task is taken on.
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      std::this_thread::sleep_for(50ms);
 
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(1s); }));
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(1s); }));
