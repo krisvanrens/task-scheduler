@@ -10,21 +10,22 @@ static constexpr std::size_t QUEUE_LENGTH = 100;
 using Scheduler = SimpleScheduler<QUEUE_LENGTH>;
 
 static void BM_Construction(benchmark::State& state) {
+  const auto num_executors = static_cast<std::size_t>(state.range(0));
+
   for (auto _ : state) {
-    Scheduler x{static_cast<std::size_t>(state.range(0))};
+    benchmark::DoNotOptimize(Scheduler{num_executors});
   }
 }
 
 static void BM_ScheduleWork(benchmark::State& state) {
-  Scheduler x{static_cast<std::size_t>(state.range(0))};
-  const auto schedule_tasks = [&x]{
-    for (unsigned int i = 0; i < QUEUE_LENGTH; i++) {
-      [[maybe_unused]] auto result = x.schedule([]{});
-    }
-  };
+  const auto num_executors = static_cast<std::size_t>(state.range(0));
+
+  Scheduler s{num_executors};
 
   for (auto _ : state) {
-    schedule_tasks();
+    for (unsigned int i = 0; i < QUEUE_LENGTH; i++) {
+      benchmark::DoNotOptimize(s.schedule([]{}));
+    }
   }
 }
 
