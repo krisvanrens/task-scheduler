@@ -44,7 +44,6 @@ requires(MaxQueueLength < 8192) class SimpleScheduler final {
         (*job).task_();
         (*job).completion_->trigger_completion();
       } else {
-        // FIXME: There's a deadlock here when destruction immediately follows construction.
         std::unique_lock lock{work_mutex_};
         work_cv_.wait(lock, [&] { return !queue_.empty() || stop_token.stop_requested(); });
       }
@@ -76,6 +75,7 @@ public:
   }
 
   ~SimpleScheduler() {
+    std::unique_lock lock{work_mutex_};
     std::ranges::for_each(executors_, [](auto& executor) { executor.request_stop(); });
     work_cv_.notify_all();
   }
