@@ -40,7 +40,7 @@ public:
   constexpr Task() = default;
 
   template<typename T>
-  requires (std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, Task>) Task(T&& value)
+  requires(std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, Task>) Task(T&& value)
     : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
 
