@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <functional>
 #include <memory>
 #include <type_traits>
@@ -14,9 +15,6 @@ class Task;
 
 template<typename Ret, typename... Args>
 class Task<Ret(Args...)> final {
-  template<typename T>
-  using is_task_t = std::enable_if_t<!std::is_same_v<std::decay_t<T>, Task>, bool>;
-
   struct Concept {
     virtual ~Concept()           = default;
     virtual Ret invoke_(Args...) = 0;
@@ -41,8 +39,8 @@ class Task<Ret(Args...)> final {
 public:
   constexpr Task() = default;
 
-  template<typename T, typename = is_task_t<T>>
-  requires std::is_invocable_r_v<Ret, T, Args...> Task(T&& value)
+  template<typename T>
+  requires (std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, Task>) Task(T&& value)
     : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
   }
 
