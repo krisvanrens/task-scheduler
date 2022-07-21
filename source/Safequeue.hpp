@@ -10,6 +10,10 @@
 
 static constexpr std::size_t MAX_SIZE_LIMIT = 8192;
 
+namespace ts {
+
+inline namespace v1 {
+
 static inline constexpr std::size_t Safequeue_max_size_limit = MAX_SIZE_LIMIT;
 
 /**
@@ -78,3 +82,7 @@ public:
     queue_.clear();
   }
 };
+
+} // namespace v1
+
+} // namespace ts

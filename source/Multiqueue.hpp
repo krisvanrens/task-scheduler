@@ -11,6 +11,10 @@
 
 #include "Safequeue.hpp"
 
+namespace ts {
+
+inline namespace v1 {
+
 /**
  * Array of thread-safe queues. This type features an API similar to a single queue. For any item push, the load is
  *  uniformly distributed over the internal queues. The pop call is called with an index to indicate the internal queue
@@ -120,3 +124,7 @@ public:
     }
   }
 };
+
+} // namespace v1
+
+} // namespace ts

@@ -5,6 +5,10 @@
 #include <type_traits>
 #include <utility>
 
+namespace ts {
+
+inline namespace v1 {
+
 template<typename>
 class Task;
 
@@ -57,3 +61,7 @@ public:
     return model_->invoke_(std::forward<Args>(args)...);
   }
 };
+
+} // namespace v1
+
+} // namespace ts

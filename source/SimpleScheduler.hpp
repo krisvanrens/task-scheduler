@@ -16,6 +16,10 @@
 #include "Multiqueue.hpp"
 #include "Task.hpp"
 
+namespace ts {
+
+inline namespace v1 {
+
 /**
  * Simple scheduler. A thread pool with an associated work queue per executor. This scheduler is able to handle tasks
  *  with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A Multiqueue is used
@@ -105,3 +109,7 @@ public:
     queue_.flush();
   }
 };
+
+} // namespace v1
+
+} // namespace ts
