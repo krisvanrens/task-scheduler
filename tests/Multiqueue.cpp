@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <utility>
 
+using namespace ts;
+
 using ValueType = unsigned int;
 using Queue     = Multiqueue<ValueType, 10>;
 

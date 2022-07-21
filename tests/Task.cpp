@@ -7,6 +7,8 @@
 
 #include "Helpers.hpp"
 
+using namespace ts;
+
 static bool free_function_is_called = false;
 
 void free_function() {

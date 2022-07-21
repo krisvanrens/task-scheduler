@@ -48,6 +48,8 @@ void BM_PopData(benchmark::State& state) {
 
 using ValueType = int;
 
+using namespace ts;
+
 BENCHMARK(BM_Construction<Safequeue<ValueType, 1>>);
 BENCHMARK(BM_Construction<Safequeue<ValueType, 10>>);
 BENCHMARK(BM_Construction<Safequeue<ValueType, 100>>);

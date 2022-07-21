@@ -12,6 +12,7 @@
 
 #include "../source/Task.hpp"
 
+using namespace ts;
 using namespace std::chrono_literals;
 
 const auto NUM_CORES = std::thread::hardware_concurrency();

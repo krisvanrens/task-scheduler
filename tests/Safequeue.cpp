@@ -12,6 +12,8 @@ struct MoveOnly {
   MoveOnly& operator=(MoveOnly&&) = default;
 };
 
+using namespace ts;
+
 using Queue = Safequeue<unsigned int, 10>;
 
 TEST_SUITE("Safequeue") {

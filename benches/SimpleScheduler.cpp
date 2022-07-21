@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <thread>
 
+using namespace ts;
+
 static constexpr std::size_t QUEUE_LENGTH = 100;
 
 using Scheduler = SimpleScheduler<QUEUE_LENGTH>;
