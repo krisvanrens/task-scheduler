@@ -10,10 +10,7 @@
 
 static constexpr std::size_t MAX_SIZE_LIMIT = 8192;
 
-// TODO: Find a nicer way to do this. I'd like the maximum size to be part of the class template,
-//        but that always requires the template parameters to be provided. At least a namespace
-//        would be nice.
-static constexpr std::size_t Safequeue_max_size_limit = MAX_SIZE_LIMIT;
+static inline constexpr std::size_t Safequeue_max_size_limit = MAX_SIZE_LIMIT;
 
 /**
  * Thread-safe queue with direct pop-result support.
