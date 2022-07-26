@@ -51,7 +51,7 @@ class multiqueue final {
   }
 
 public:
-  multiqueue(std::size_t num_queues) {
+  explicit multiqueue(std::size_t num_queues) {
     if (num_queues == 0) {
       throw std::underflow_error("Number of queues must be non-zero");
     }

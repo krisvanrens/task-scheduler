@@ -23,7 +23,7 @@ class task<Ret(Args...)> final {
   template<typename T>
   struct model_t final : concept_t {
     template<typename U = T>
-    model_t(U&& value)
+    explicit model_t(U&& value)
       : value_{std::forward<U>(value)} {
     }
 
