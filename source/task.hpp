@@ -11,19 +11,19 @@ namespace ts {
 inline namespace v1 {
 
 template<typename>
-class Task;
+class task;
 
 template<typename Ret, typename... Args>
-class Task<Ret(Args...)> final {
-  struct Concept {
-    virtual ~Concept()           = default;
+class task<Ret(Args...)> final {
+  struct concept_t {
+    virtual ~concept_t()         = default;
     virtual Ret invoke_(Args...) = 0;
   };
 
   template<typename T>
-  struct Model final : Concept {
+  struct model_t final : concept_t {
     template<typename U = T>
-    Model(U&& value)
+    model_t(U&& value)
       : value_{std::forward<U>(value)} {
     }
 
@@ -34,18 +34,18 @@ class Task<Ret(Args...)> final {
     T value_;
   };
 
-  std::unique_ptr<Concept> model_;
+  std::unique_ptr<concept_t> model_;
 
 public:
-  constexpr Task() = default;
+  constexpr task() = default;
 
   template<typename T>
-  requires(std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, Task>) Task(T&& value)
-    : model_{std::make_unique<Model<std::decay_t<T>>>(std::forward<T>(value))} {
+  requires(std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, task>) task(T&& value)
+    : model_{std::make_unique<model_t<std::decay_t<T>>>(std::forward<T>(value))} {
   }
 
-  Task(Task&&) noexcept            = default;
-  Task& operator=(Task&&) noexcept = default;
+  task(task&&) noexcept            = default;
+  task& operator=(task&&) noexcept = default;
 
   explicit operator bool() const noexcept {
     return !!model_;

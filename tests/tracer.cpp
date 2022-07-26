@@ -1,13 +1,13 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "Tracer.hpp"
+#include "tracer.hpp"
 
 #include <doctest/doctest.h>
 
 #include <utility>
 
-TEST_SUITE("Tracer") {
+TEST_SUITE("tracer") {
   TEST_CASE("Construction") {
-    Tracer t;
+    tracer t;
 
     REQUIRE(t.counts().ctor == 1);
     REQUIRE(t.counts().dtor == 0);
@@ -18,9 +18,9 @@ TEST_SUITE("Tracer") {
   }
 
   TEST_CASE("Copy construction") {
-    Tracer t1;
+    tracer t1;
 
-    Tracer t2{t1};
+    tracer t2{t1};
 
     REQUIRE(t1.counts().ctor == 1);
     REQUIRE(t1.counts().dtor == 0);
@@ -38,7 +38,7 @@ TEST_SUITE("Tracer") {
   }
 
   TEST_CASE("Copy assignment") {
-    Tracer t1, t2;
+    tracer t1, t2;
 
     t2 = t1;
 
@@ -58,9 +58,9 @@ TEST_SUITE("Tracer") {
   }
 
   TEST_CASE("Move construction") {
-    Tracer t1;
+    tracer t1;
 
-    Tracer t2{std::move(t1)};
+    tracer t2{std::move(t1)};
 
     REQUIRE(t1.counts().ctor == 1);
     REQUIRE(t1.counts().dtor == 0);
@@ -78,7 +78,7 @@ TEST_SUITE("Tracer") {
   }
 
   TEST_CASE("Move assignment") {
-    Tracer t1, t2;
+    tracer t1, t2;
 
     t2 = std::move(t1);
 

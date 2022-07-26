@@ -14,21 +14,21 @@ namespace ts {
 
 inline namespace v1 {
 
-static inline constexpr std::size_t Safequeue_max_size_limit = MAX_SIZE_LIMIT;
+static inline constexpr std::size_t safe_queue_max_size_limit = MAX_SIZE_LIMIT;
 
 /**
  * Thread-safe queue with direct pop-result support.
  */
 template<typename T, std::size_t MaxSize>
-requires((MaxSize > 0) && (MaxSize <= MAX_SIZE_LIMIT)) class Safequeue final {
+requires((MaxSize > 0) && (MaxSize <= MAX_SIZE_LIMIT)) class safe_queue final {
   std::deque<T>             queue_;
   mutable std::shared_mutex mutex_;
 
 public:
-  Safequeue() = default;
+  safe_queue() = default;
 
-  Safequeue(Safequeue& other) noexcept      = delete;
-  Safequeue& operator=(Safequeue&) noexcept = delete;
+  safe_queue(safe_queue& other) noexcept      = delete;
+  safe_queue& operator=(safe_queue&) noexcept = delete;
 
   [[nodiscard]] static constexpr std::size_t max_size_limit() noexcept {
     return MAX_SIZE_LIMIT;

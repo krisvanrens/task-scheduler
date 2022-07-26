@@ -1,4 +1,4 @@
-#include "../source/Safequeue.hpp"
+#include "../source/safe_queue.hpp"
 
 #include <benchmark/benchmark.h>
 
@@ -46,26 +46,24 @@ void BM_PopData(benchmark::State& state) {
   state.SetBytesProcessed(static_cast<int64_t>(x.max_size()));
 }
 
-using ValueType = int;
-
 using namespace ts;
 
-BENCHMARK(BM_Construction<Safequeue<ValueType, 1>>);
-BENCHMARK(BM_Construction<Safequeue<ValueType, 10>>);
-BENCHMARK(BM_Construction<Safequeue<ValueType, 100>>);
-BENCHMARK(BM_Construction<Safequeue<ValueType, 1'024>>);
-BENCHMARK(BM_Construction<Safequeue<ValueType, Safequeue_max_size_limit>>);
+BENCHMARK(BM_Construction<safe_queue<int, 1>>);
+BENCHMARK(BM_Construction<safe_queue<int, 10>>);
+BENCHMARK(BM_Construction<safe_queue<int, 100>>);
+BENCHMARK(BM_Construction<safe_queue<int, 1'024>>);
+BENCHMARK(BM_Construction<safe_queue<int, safe_queue_max_size_limit>>);
 
-BENCHMARK(BM_PushData<Safequeue<ValueType, 1>>);
-BENCHMARK(BM_PushData<Safequeue<ValueType, 10>>);
-BENCHMARK(BM_PushData<Safequeue<ValueType, 100>>);
-BENCHMARK(BM_PushData<Safequeue<ValueType, 1'024>>);
-BENCHMARK(BM_PushData<Safequeue<ValueType, Safequeue_max_size_limit>>);
+BENCHMARK(BM_PushData<safe_queue<int, 1>>);
+BENCHMARK(BM_PushData<safe_queue<int, 10>>);
+BENCHMARK(BM_PushData<safe_queue<int, 100>>);
+BENCHMARK(BM_PushData<safe_queue<int, 1'024>>);
+BENCHMARK(BM_PushData<safe_queue<int, safe_queue_max_size_limit>>);
 
-BENCHMARK(BM_PopData<Safequeue<ValueType, 1>>);
-BENCHMARK(BM_PopData<Safequeue<ValueType, 10>>);
-BENCHMARK(BM_PopData<Safequeue<ValueType, 100>>);
-BENCHMARK(BM_PopData<Safequeue<ValueType, 1'024>>);
-BENCHMARK(BM_PopData<Safequeue<ValueType, Safequeue_max_size_limit>>);
+BENCHMARK(BM_PopData<safe_queue<int, 1>>);
+BENCHMARK(BM_PopData<safe_queue<int, 10>>);
+BENCHMARK(BM_PopData<safe_queue<int, 100>>);
+BENCHMARK(BM_PopData<safe_queue<int, 1'024>>);
+BENCHMARK(BM_PopData<safe_queue<int, safe_queue_max_size_limit>>);
 
 BENCHMARK_MAIN();

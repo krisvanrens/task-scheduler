@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "Safequeue.hpp"
+#include "safe_queue.hpp"
 
 namespace ts {
 
@@ -21,15 +21,15 @@ inline namespace v1 {
  *  index. However, when the indexed queue is empty, data is 'stolen' from the next non-empty queue.
  */
 template<typename T, std::size_t MaxQueueSize>
-class Multiqueue final {
-  using Queue     = Safequeue<T, MaxQueueSize>;
-  using Queues    = std::deque<Queue>;
-  using QueueIter = typename Queues::iterator;
+class multiqueue final {
+  using queue_t    = safe_queue<T, MaxQueueSize>;
+  using queues     = std::deque<queue_t>;
+  using queue_iter = typename queues::iterator;
 
   static constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
 
-  Queues    queues_;
-  QueueIter sink_cursor_;
+  queues     queues_;
+  queue_iter sink_cursor_;
 
   void advance_sink_cursor() {
     if (++sink_cursor_ == queues_.end()) {
@@ -51,7 +51,7 @@ class Multiqueue final {
   }
 
 public:
-  Multiqueue(std::size_t num_queues) {
+  multiqueue(std::size_t num_queues) {
     if (num_queues == 0) {
       throw std::underflow_error("Number of queues must be non-zero");
     }
@@ -65,8 +65,8 @@ public:
     sink_cursor_ = std::prev(queues_.end());
   }
 
-  Multiqueue(Multiqueue&&) noexcept            = default;
-  Multiqueue& operator=(Multiqueue&&) noexcept = default;
+  multiqueue(multiqueue&&) noexcept            = default;
+  multiqueue& operator=(multiqueue&&) noexcept = default;
 
   [[nodiscard]] static constexpr std::size_t max_queue_size() {
     return MaxQueueSize;
@@ -102,7 +102,7 @@ public:
       throw std::out_of_range("Queue index out of range");
     }
 
-    QueueIter source = queues_.begin() + static_cast<typename Queues::difference_type>(index);
+    queue_iter source = queues_.begin() + static_cast<typename queues::difference_type>(index);
 
     if (source->empty()) {
       std::size_t advance_count = 0;

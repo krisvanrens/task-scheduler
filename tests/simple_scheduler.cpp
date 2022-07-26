@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/SimpleScheduler.hpp"
+#include "../source/simple_scheduler.hpp"
 
 #include <doctest/doctest.h>
 
@@ -10,49 +10,49 @@
 #include <thread>
 #include <utility>
 
-#include "../source/Task.hpp"
+#include "../source/task.hpp"
 
 using namespace ts;
 using namespace std::chrono_literals;
 
 const auto NUM_CORES = std::thread::hardware_concurrency();
 
-TEST_SUITE("SimpleScheduler") {
+TEST_SUITE("simple_scheduler") {
   TEST_CASE("Construction") {
-    SimpleScheduler<1>   s1{1};
-    SimpleScheduler<10>  s2{1};
-    SimpleScheduler<100> s3{NUM_CORES};
+    simple_scheduler<1>   s1{1};
+    simple_scheduler<10>  s2{1};
+    simple_scheduler<100> s3{NUM_CORES};
   }
 
   TEST_CASE("Construction (failure cases)") {
-    CHECK_THROWS_AS((SimpleScheduler<10>{0}), std::underflow_error);
-    CHECK_THROWS_AS((SimpleScheduler<10>{1024}), std::overflow_error);
+    CHECK_THROWS_AS((simple_scheduler<10>{0}), std::underflow_error);
+    CHECK_THROWS_AS((simple_scheduler<10>{1024}), std::overflow_error);
   }
 
   TEST_CASE("Getting the number of executors") {
-    CHECK(SimpleScheduler<10>{1}.num_executors() == 1);
-    CHECK(SimpleScheduler<10>{NUM_CORES}.num_executors() == NUM_CORES);
+    CHECK(simple_scheduler<10>{1}.num_executors() == 1);
+    CHECK(simple_scheduler<10>{NUM_CORES}.num_executors() == NUM_CORES);
   }
 
   TEST_CASE("Schedule jobs" * doctest::skip(NUM_CORES < 2)) {
     std::array<bool, 4> call_status = {};
 
-    Task<void()> t0{[&] {
+    task<void()> t0{[&] {
       std::this_thread::sleep_for(20ms);
       call_status[0] = true;
     }};
 
-    Task<void()> t1{[&] {
+    task<void()> t1{[&] {
       std::this_thread::sleep_for(20ms);
       call_status[1] = true;
     }};
 
-    Task<void()> t2{[&] {
+    task<void()> t2{[&] {
       std::this_thread::sleep_for(20ms);
       call_status[2] = true;
     }};
 
-    Task<void()> t3{[&] {
+    task<void()> t3{[&] {
       std::this_thread::sleep_for(20ms);
       call_status[3] = true;
     }};
@@ -62,7 +62,7 @@ TEST_SUITE("SimpleScheduler") {
     REQUIRE(t2);
     REQUIRE(t3);
 
-    SimpleScheduler<2> s{2};
+    simple_scheduler<2> s{2};
 
     const auto check_schedule = [&](auto&& task) {
       auto completion = s.schedule(std::move(task));
@@ -95,7 +95,7 @@ TEST_SUITE("SimpleScheduler") {
 
     const auto callback = [&] { count++; };
 
-    SimpleScheduler<2> s{2};
+    simple_scheduler<2> s{2};
 
     REQUIRE(s.schedule([&] { callback(); }));
     REQUIRE(s.schedule([&] { callback(); }));
@@ -109,10 +109,10 @@ TEST_SUITE("SimpleScheduler") {
   }
 
   TEST_CASE("Flush scheduler" * doctest::timeout(1)) {
-    const auto timeStart = std::chrono::system_clock::now();
+    const auto time_start = std::chrono::system_clock::now();
 
     {
-      SimpleScheduler<3> s{1};
+      simple_scheduler<3> s{1};
 
       REQUIRE(s.schedule([&] { std::this_thread::sleep_for(100ms); }));
 
@@ -126,9 +126,9 @@ TEST_SUITE("SimpleScheduler") {
       s.flush();
     }
 
-    const auto timeEnd = std::chrono::system_clock::now();
+    const auto time_end = std::chrono::system_clock::now();
 
-    CHECK((timeEnd - timeStart) < 200ms);
+    CHECK((time_end - time_start) < 200ms);
   }
 
 } // TEST_SUITE

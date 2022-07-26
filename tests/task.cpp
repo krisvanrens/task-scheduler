@@ -1,11 +1,11 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/Task.hpp"
+#include "../source/task.hpp"
 
 #include <doctest/doctest.h>
 
 #include <utility>
 
-#include "Helpers.hpp"
+#include "helpers.hpp"
 
 using namespace ts;
 
@@ -56,7 +56,7 @@ constexpr typename unwrap_function<Function>::args_t make_args() {
   return {};
 }
 
-struct Value {
+struct value {
   int value = {};
 };
 
@@ -67,11 +67,11 @@ TYPE_TO_STRING(int(int));
 TYPE_TO_STRING(void(int, float));
 TYPE_TO_STRING(int(int, float));
 
-TEST_SUITE("Task") {
+TEST_SUITE("task") {
   TEST_CASE("Construction from function object") {
     bool is_called = false;
 
-    Task<void()> t{Callable{is_called}};
+    task<void()> t{helpers::callable{is_called}};
 
     REQUIRE(!is_called);
 
@@ -83,7 +83,7 @@ TEST_SUITE("Task") {
   TEST_CASE("Construction from lambda") {
     bool is_called = false;
 
-    Task<void()> t{[&] { is_called = true; }};
+    task<void()> t{[&] { is_called = true; }};
 
     REQUIRE(!is_called);
 
@@ -95,7 +95,7 @@ TEST_SUITE("Task") {
   TEST_CASE("Construction from free function") {
     free_function_is_called = false;
 
-    Task<void()> t{free_function};
+    task<void()> t{free_function};
 
     REQUIRE(!free_function_is_called);
 
@@ -105,14 +105,14 @@ TEST_SUITE("Task") {
   }
 
   TEST_CASE_TEMPLATE("Default construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
-    Task<T> t;
+    task<T> t;
 
     CHECK(!t);
     CHECK_THROWS(std::apply(t, make_args<T>()));
   }
 
   TEST_CASE_TEMPLATE("Non-default construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
-    Task<T> t{make_function<T>()};
+    task<T> t{make_function<T>()};
 
     CHECK(t);
 
@@ -120,10 +120,10 @@ TEST_SUITE("Task") {
   }
 
   TEST_CASE_TEMPLATE("Move construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
-    Task<T> t1{make_function<T>()};
+    task<T> t1{make_function<T>()};
     std::apply(t1, make_args<T>());
 
-    Task<T> t2{std::move(t1)};
+    task<T> t2{std::move(t1)};
 
     CHECK(t2);
     std::apply(t2, make_args<T>());
@@ -133,8 +133,8 @@ TEST_SUITE("Task") {
   }
 
   TEST_CASE_TEMPLATE("Move assignment", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
-    Task<T> t1{make_function<T>()};
-    Task<T> t2;
+    task<T> t1{make_function<T>()};
+    task<T> t2;
 
     std::apply(t1, make_args<T>());
     REQUIRE(!t2);
@@ -148,101 +148,101 @@ TEST_SUITE("Task") {
     CHECK_THROWS(std::apply(t1, make_args<T>()));
   }
 
-  TEST_CASE("Task argument propagation (matched signatures)") {
+  TEST_CASE("task argument propagation (matched signatures)") {
     SUBCASE("value") {
-      Task<void(Value)> t{[](Value arg) { CHECK(arg.value == 42); }};
+      task<void(value)> t{[](value arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x1{42};
+      value x1{42};
       t(x1);
 
-      const Value x2{42};
+      const value x2{42};
       t(x2);
     }
 
     SUBCASE("const lvalue reference") {
-      Task<void(const Value&)> t{[](const Value& arg) { CHECK(arg.value == 42); }};
+      task<void(const value&)> t{[](const value& arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x1{42};
+      value x1{42};
       t(x1);
 
-      const Value x2{42};
+      const value x2{42};
       t(x2);
     }
 
     SUBCASE("lvalue reference") {
-      Task<void(Value&)> t{[](Value& arg) { CHECK(arg.value == 42); }};
+      task<void(value&)> t{[](value& arg) { CHECK(arg.value == 42); }};
 
-      Value x{42};
+      value x{42};
       t(x);
     }
 
     SUBCASE("rvalue reference") {
-      Task<void(Value &&)> t{[](Value&& arg) { CHECK(arg.value == 42); }};
+      task<void(value &&)> t{[](value&& arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x{42};
+      value x{42};
       t(std::move(x));
     }
   }
 
-  TEST_CASE("Task argument propagation (mismatched signatures)") {
+  TEST_CASE("task argument propagation (mismatched signatures)") {
     SUBCASE("const lvalue reference to value") {
-      Task<void(Value)> t{[](const Value& arg) { CHECK(arg.value == 42); }};
+      task<void(value)> t{[](const value& arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x1{42};
+      value x1{42};
       t(x1);
 
-      const Value x2{42};
+      const value x2{42};
       t(x2);
     }
 
     SUBCASE("rvalue reference to value") {
-      Task<void(Value)> t{[](Value&& arg) { CHECK(arg.value == 42); }};
+      task<void(value)> t{[](value&& arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      const Value x{42};
+      const value x{42};
       t(std::move(x));
     }
 
     SUBCASE("value to const lvalue reference") {
-      Task<void(const Value&)> t{[](Value arg) { CHECK(arg.value == 42); }};
+      task<void(const value&)> t{[](value arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x1{42};
+      value x1{42};
       t(x1);
 
-      const Value x2{42};
+      const value x2{42};
       t(x2);
     }
 
     SUBCASE("value to lvalue reference") {
-      Task<void(Value&)> t{[](Value arg) { CHECK(arg.value == 42); }};
+      task<void(value&)> t{[](value arg) { CHECK(arg.value == 42); }};
 
-      Value x{42};
+      value x{42};
       t(x);
     }
 
     SUBCASE("lvalue reference to rvalue reference") {
-      Task<void(Value &&)> t{[](Value arg) { CHECK(arg.value == 42); }};
+      task<void(value &&)> t{[](value arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
     }
 
     SUBCASE("const lvalue reference to rvalue reference") {
-      Task<void(Value &&)> t{[](const Value& arg) { CHECK(arg.value == 42); }};
+      task<void(value &&)> t{[](const value& arg) { CHECK(arg.value == 42); }};
 
-      t(Value{42});
+      t(value{42});
 
-      Value x{42};
+      value x{42};
       t(std::move(x));
     }
   }

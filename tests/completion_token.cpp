@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/CompletionToken.hpp"
+#include "../source/completion_token.hpp"
 
 #include <doctest/doctest.h>
 
@@ -7,17 +7,19 @@
 #include <memory>
 #include <thread>
 
-TEST_SUITE("CompletionData") {
+using namespace ts;
+
+TEST_SUITE("completion_data") {
   using namespace detail;
 
   TEST_CASE("Construction") {
-    CompletionData d;
+    completion_data d;
 
     CHECK_FALSE(d.is_completed());
   }
 
   TEST_CASE("Triggering") {
-    CompletionData d;
+    completion_data d;
 
     CHECK_FALSE(d.is_completed());
 
@@ -27,9 +29,9 @@ TEST_SUITE("CompletionData") {
   }
 }
 
-TEST_SUITE("CompletionToken") {
+TEST_SUITE("completion_token") {
   TEST_CASE("Construction") {
-    CompletionToken t{std::make_shared<detail::CompletionData>()};
+    completion_token t{std::make_shared<detail::completion_data>()};
 
     CHECK_FALSE(t);
   }
@@ -37,8 +39,8 @@ TEST_SUITE("CompletionToken") {
   TEST_CASE("Completion handling") {
     using namespace std::chrono;
 
-    auto            data = std::make_shared<detail::CompletionData>();
-    CompletionToken t{data};
+    auto             data = std::make_shared<detail::completion_data>();
+    completion_token t{data};
 
     CHECK_FALSE(t);
 

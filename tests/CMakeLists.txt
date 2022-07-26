@@ -16,49 +16,49 @@ target_link_libraries(
 
 target_compile_definitions(relaxed_constexpr_tests PRIVATE -DTEST_NONSTATIC_REQUIRE)
 
-add_executable(tests_CompletionToken CompletionToken.cpp)
+add_executable(tests_completion_token completion_token.cpp)
 target_link_libraries(
-  tests_CompletionToken
+  tests_completion_token
   PRIVATE
   project_warnings
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_Multiqueue Multiqueue.cpp)
+add_executable(tests_multiqueue multiqueue.cpp)
 target_link_libraries(
-  tests_Multiqueue
+  tests_multiqueue
   PRIVATE
   project_warnings
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_Safequeue Safequeue.cpp)
+add_executable(tests_safe_queue safe_queue.cpp)
 target_link_libraries(
-  tests_Safequeue
+  tests_safe_queue
   PRIVATE
   project_warnings
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_SimpleScheduler SimpleScheduler.cpp)
+add_executable(tests_simple_scheduler simple_scheduler.cpp)
 target_link_libraries(
-  tests_SimpleScheduler
+  tests_simple_scheduler
   PRIVATE
   project_warnings
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_Task Task.cpp)
+add_executable(tests_task task.cpp)
 target_link_libraries(
-  tests_Task
+  tests_task
   PRIVATE
   project_warnings
   project_options
   CONAN_PKG::doctest)
 
-add_executable(tests_Tracer Tracer.cpp)
+add_executable(tests_tracer tracer.cpp)
 target_link_libraries(
-  tests_Tracer
+  tests_tracer
   PRIVATE
   project_warnings
   project_options

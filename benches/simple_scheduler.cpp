@@ -1,4 +1,4 @@
-#include "../source/SimpleScheduler.hpp"
+#include "../source/simple_scheduler.hpp"
 
 #include <benchmark/benchmark.h>
 
@@ -9,20 +9,20 @@ using namespace ts;
 
 static constexpr std::size_t QUEUE_LENGTH = 100;
 
-using Scheduler = SimpleScheduler<QUEUE_LENGTH>;
+using test_scheduler = simple_scheduler<QUEUE_LENGTH>;
 
 static void BM_Construction(benchmark::State& state) {
   const auto num_executors = static_cast<std::size_t>(state.range(0));
 
   for (auto _ : state) {
-    benchmark::DoNotOptimize(Scheduler{num_executors});
+    benchmark::DoNotOptimize(test_scheduler{num_executors});
   }
 }
 
 static void BM_ScheduleWork(benchmark::State& state) {
   const auto num_executors = static_cast<std::size_t>(state.range(0));
 
-  Scheduler s{num_executors};
+  test_scheduler s{num_executors};
 
   for (auto _ : state) {
     for (unsigned int i = 0; i < QUEUE_LENGTH; i++) {

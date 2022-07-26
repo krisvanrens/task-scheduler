@@ -1,38 +1,38 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/Safequeue.hpp"
+#include "../source/safe_queue.hpp"
 
 #include <doctest/doctest.h>
 
 #include <utility>
 
-struct MoveOnly {
-  MoveOnly() = default;
+struct move_only {
+  move_only() = default;
 
-  MoveOnly(MoveOnly&&)            = default;
-  MoveOnly& operator=(MoveOnly&&) = default;
+  move_only(move_only&&)            = default;
+  move_only& operator=(move_only&&) = default;
 };
 
 using namespace ts;
 
-using Queue = Safequeue<unsigned int, 10>;
+using test_queue = safe_queue<unsigned int, 10>;
 
-TEST_SUITE("Safequeue") {
+TEST_SUITE("safe_queue") {
   TEST_CASE("Default construction") {
-    Queue x;
+    test_queue x;
 
     REQUIRE(x.max_size() == 10);
   }
 
   TEST_CASE("Get maximum length") {
-    CHECK(Safequeue<int, 1>{}.max_size() == 1);
-    CHECK(Safequeue<int, 2>{}.max_size() == 2);
-    CHECK(Safequeue<int, 10>{}.max_size() == 10);
-    CHECK(Safequeue<int, 100>{}.max_size() == 100);
-    CHECK(Safequeue<int, 8192>{}.max_size() == 8192);
+    CHECK(safe_queue<int, 1>{}.max_size() == 1);
+    CHECK(safe_queue<int, 2>{}.max_size() == 2);
+    CHECK(safe_queue<int, 10>{}.max_size() == 10);
+    CHECK(safe_queue<int, 100>{}.max_size() == 100);
+    CHECK(safe_queue<int, 8192>{}.max_size() == 8192);
   }
 
   TEST_CASE("Get size") {
-    Queue x;
+    test_queue x;
 
     CHECK(x.size() == 0);
 
@@ -44,7 +44,7 @@ TEST_SUITE("Safequeue") {
   }
 
   TEST_CASE("Get empty state") {
-    Queue x;
+    test_queue x;
 
     CHECK(x.empty());
 
@@ -56,7 +56,7 @@ TEST_SUITE("Safequeue") {
   }
 
   TEST_CASE("Pushing elements") {
-    Queue x;
+    test_queue x;
 
     REQUIRE(x.size() == 0);
 
@@ -74,7 +74,7 @@ TEST_SUITE("Safequeue") {
   }
 
   TEST_CASE("Popping elements") {
-    Queue x;
+    test_queue x;
 
     for (unsigned int i = 0; i < 10; i++) {
       REQUIRE(x.size() == i);
@@ -92,16 +92,16 @@ TEST_SUITE("Safequeue") {
   }
 
   TEST_CASE("Move-only type handling") {
-    Safequeue<MoveOnly, 3> x;
+    safe_queue<move_only, 3> x;
 
-    CHECK(x.push(MoveOnly{}));
-    CHECK(x.push(MoveOnly{}));
-    CHECK(x.push(MoveOnly{}));
+    CHECK(x.push(move_only{}));
+    CHECK(x.push(move_only{}));
+    CHECK(x.push(move_only{}));
 
     const auto pop = [&] {
       auto element = x.pop();
       REQUIRE(element.has_value());
-      [[maybe_unused]] const MoveOnly m = std::move(element.value());
+      [[maybe_unused]] const move_only m = std::move(element.value());
     };
 
     pop();
@@ -110,7 +110,7 @@ TEST_SUITE("Safequeue") {
   }
 
   TEST_CASE("Flushing the queue") {
-    Queue x;
+    test_queue x;
 
     for (unsigned int i = 0; i < 10; i++) {
       REQUIRE(x.size() == i);

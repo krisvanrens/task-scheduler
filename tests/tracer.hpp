@@ -2,10 +2,10 @@
 
 #include <cstdio>
 
-class Tracer {
+class tracer {
   bool verbose_ = false;
 
-  struct Counts {
+  struct counts {
     unsigned int ctor        = 0;
     unsigned int dtor        = 0;
     unsigned int copy_ctor   = 0;
@@ -14,13 +14,13 @@ class Tracer {
     unsigned int move_assign = 0;
 
     void print() const {
-      printf("Counts: [ctor=%u, dtor=%u, copy_ctor=%u, copy_assign=%u, move_ctor=%u, move_assign=%u]\n", ctor, dtor, copy_ctor, copy_assign,
+      printf("counts: [ctor=%u, dtor=%u, copy_ctor=%u, copy_assign=%u, move_ctor=%u, move_assign=%u]\n", ctor, dtor, copy_ctor, copy_assign,
              move_ctor, move_assign);
     }
   } counts_;
 
 public:
-  Tracer(bool verbose = false)
+  tracer(bool verbose = false)
     : verbose_{verbose} {
     counts_.ctor++;
 
@@ -29,7 +29,7 @@ public:
     }
   }
 
-  ~Tracer() {
+  ~tracer() {
     counts_.dtor++;
 
     if (verbose_) {
@@ -37,7 +37,7 @@ public:
     }
   }
 
-  Tracer(const Tracer& other) {
+  tracer(const tracer& other) {
     verbose_ = other.verbose_;
     counts_  = other.counts_;
 
@@ -48,7 +48,7 @@ public:
     }
   }
 
-  Tracer& operator=(const Tracer& other) {
+  tracer& operator=(const tracer& other) {
     verbose_ = other.verbose_;
     counts_  = other.counts_;
 
@@ -61,7 +61,7 @@ public:
     return *this;
   }
 
-  Tracer(Tracer&& other) {
+  tracer(tracer&& other) {
     verbose_ = other.verbose_;
     counts_  = other.counts_;
 
@@ -72,7 +72,7 @@ public:
     }
   }
 
-  Tracer& operator=(Tracer&& other) {
+  tracer& operator=(tracer&& other) {
     verbose_ = other.verbose_;
     counts_  = other.counts_;
 
@@ -89,7 +89,7 @@ public:
     verbose_ = verbose;
   }
 
-  const Counts& counts() const {
+  const counts& counts() const {
     return counts_;
   }
 };

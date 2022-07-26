@@ -5,9 +5,13 @@
 #include <mutex>
 #include <stdexcept>
 
+namespace ts {
+
+inline namespace v1 {
+
 namespace detail {
 
-class CompletionData final {
+class completion_data final {
   mutable std::mutex      mutex_;
   std::condition_variable condition_;
   bool                    completed_ = false;
@@ -32,11 +36,11 @@ public:
 
 } // namespace detail
 
-class CompletionToken final {
-  std::shared_ptr<detail::CompletionData> data_;
+class completion_token final {
+  std::shared_ptr<detail::completion_data> data_;
 
 public:
-  explicit CompletionToken(std::shared_ptr<detail::CompletionData> data)
+  explicit completion_token(std::shared_ptr<detail::completion_data> data)
     : data_{data} {
     if (!data_) {
       throw std::logic_error("Completion data must not be null");
@@ -51,3 +55,7 @@ public:
     return data_->is_completed();
   }
 };
+
+} // namespace v1
+
+} // namespace ts

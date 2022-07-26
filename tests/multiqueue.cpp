@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "../source/Multiqueue.hpp"
+#include "../source/multiqueue.hpp"
 
 #include <doctest/doctest.h>
 
@@ -8,32 +8,31 @@
 
 using namespace ts;
 
-using ValueType = unsigned int;
-using Queue     = Multiqueue<ValueType, 10>;
+using test_queue = multiqueue<unsigned int, 10>;
 
-TEST_SUITE("Multiqueue") {
+TEST_SUITE("multiqueue") {
   TEST_CASE("Construction") {
-    Queue x1{1};
-    Queue x2{10};
+    test_queue x1{1};
+    test_queue x2{10};
   }
 
   TEST_CASE("Construction (failure cases)") {
-    CHECK_THROWS_AS(Queue{0}, std::underflow_error);
-    CHECK_THROWS_AS(Queue{10'000}, std::overflow_error);
+    CHECK_THROWS_AS(test_queue{0}, std::underflow_error);
+    CHECK_THROWS_AS(test_queue{10'000}, std::overflow_error);
   }
 
   TEST_CASE("Move construction") {
-    Queue x{4};
+    test_queue x{4};
 
     REQUIRE(x.num_queues() == 4);
 
-    Queue y{std::move(x)};
+    test_queue y{std::move(x)};
 
     CHECK(y.num_queues() == 4);
   }
 
   TEST_CASE("Move assignment") {
-    Queue x{4}, y{2};
+    test_queue x{4}, y{2};
 
     REQUIRE(x.num_queues() == 4);
     REQUIRE(y.num_queues() == 2);
@@ -44,29 +43,29 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Getting the maximum queue size") {
-    CHECK(Multiqueue<int, 1>{1}.max_queue_size() == 1);
-    CHECK(Multiqueue<int, 2>{1}.max_queue_size() == 2);
-    CHECK(Multiqueue<int, 10>{1}.max_queue_size() == 10);
+    CHECK(multiqueue<int, 1>{1}.max_queue_size() == 1);
+    CHECK(multiqueue<int, 2>{1}.max_queue_size() == 2);
+    CHECK(multiqueue<int, 10>{1}.max_queue_size() == 10);
   }
 
   TEST_CASE("Getting the number of queues") {
-    CHECK(Multiqueue<int, 1>{1}.num_queues() == 1);
-    CHECK(Multiqueue<int, 1>{2}.num_queues() == 2);
-    CHECK(Multiqueue<int, 1>{10}.num_queues() == 10);
+    CHECK(multiqueue<int, 1>{1}.num_queues() == 1);
+    CHECK(multiqueue<int, 1>{2}.num_queues() == 2);
+    CHECK(multiqueue<int, 1>{10}.num_queues() == 10);
   }
 
   TEST_CASE("Getting the maximum capacity") {
-    CHECK(Multiqueue<int, 100>{1}.max_capacity() == 100);
-    CHECK(Multiqueue<int, 100>{2}.max_capacity() == 200);
-    CHECK(Multiqueue<int, 100>{10}.max_capacity() == 1'000);
-    CHECK(Multiqueue<int, 1024>{1}.max_capacity() == 1'024);
-    CHECK(Multiqueue<int, 1024>{2}.max_capacity() == 2'048);
-    CHECK(Multiqueue<int, 1024>{10}.max_capacity() == 10'240);
-    CHECK(Multiqueue<int, 8192>{1024}.max_capacity() == 8'388'608);
+    CHECK(multiqueue<int, 100>{1}.max_capacity() == 100);
+    CHECK(multiqueue<int, 100>{2}.max_capacity() == 200);
+    CHECK(multiqueue<int, 100>{10}.max_capacity() == 1'000);
+    CHECK(multiqueue<int, 1024>{1}.max_capacity() == 1'024);
+    CHECK(multiqueue<int, 1024>{2}.max_capacity() == 2'048);
+    CHECK(multiqueue<int, 1024>{10}.max_capacity() == 10'240);
+    CHECK(multiqueue<int, 8192>{1024}.max_capacity() == 8'388'608);
   }
 
   TEST_CASE("Getting the empty state") {
-    Queue x{1};
+    test_queue x{1};
 
     CHECK(x.empty());
 
@@ -76,7 +75,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Getting the size (single queue)") {
-    Queue x{1};
+    test_queue x{1};
 
     REQUIRE(x.max_capacity() == x.max_queue_size());
 
@@ -88,7 +87,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Getting the size (multiple queues)") {
-    Queue x{10};
+    test_queue x{10};
 
     REQUIRE(x.max_capacity() == 10 * x.max_queue_size());
 
@@ -100,7 +99,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Pushing elements (single queue)") {
-    Queue x{1};
+    test_queue x{1};
 
     REQUIRE(x.max_capacity() == x.max_queue_size());
 
@@ -113,7 +112,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Pushing elements (multiple queues)") {
-    Queue x{10};
+    test_queue x{10};
 
     REQUIRE(x.max_capacity() == 10 * x.max_queue_size());
 
@@ -126,7 +125,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Popping elements queue-indexed (single queue)") {
-    Queue x{1};
+    test_queue x{1};
 
     for (unsigned int i = 0; i < x.max_queue_size(); i++) {
       REQUIRE(x.push(i));
@@ -143,7 +142,7 @@ TEST_SUITE("Multiqueue") {
 
   TEST_CASE("Popping elements queue-indexed (multiple queues)") {
     constexpr unsigned int NUM_QUEUES = 10;
-    Queue                  x{NUM_QUEUES};
+    test_queue             x{NUM_QUEUES};
 
     for (unsigned int i = 0; i < (NUM_QUEUES * x.max_queue_size()); i++) {
       REQUIRE(x.push(i));
@@ -165,14 +164,14 @@ TEST_SUITE("Multiqueue") {
   TEST_CASE("Popping queue-indexed (failure cases)") {
     const auto pop = [](auto&& queue, unsigned int index) { [[maybe_unused]] auto result = queue.pop(index); };
 
-    CHECK_THROWS_AS(pop(Queue{1}, 1), std::out_of_range);
-    CHECK_THROWS_AS(pop(Queue{2}, 2), std::out_of_range);
-    CHECK_THROWS_AS(pop(Queue{10}, 10), std::out_of_range);
-    CHECK_THROWS_AS(pop(Queue{10}, 100), std::out_of_range);
+    CHECK_THROWS_AS(pop(test_queue{1}, 1), std::out_of_range);
+    CHECK_THROWS_AS(pop(test_queue{2}, 2), std::out_of_range);
+    CHECK_THROWS_AS(pop(test_queue{10}, 10), std::out_of_range);
+    CHECK_THROWS_AS(pop(test_queue{10}, 100), std::out_of_range);
   }
 
   TEST_CASE("Popping elements with work stealing") {
-    Multiqueue<unsigned int, 5> x{2};
+    multiqueue<unsigned int, 5> x{2};
 
     for (unsigned int i = 0; i < (2 * x.max_queue_size()); i++) {
       REQUIRE(x.push(i));
@@ -208,7 +207,7 @@ TEST_SUITE("Multiqueue") {
   }
 
   TEST_CASE("Flushing the queue") {
-    Multiqueue<unsigned int, 5> x{2};
+    multiqueue<unsigned int, 5> x{2};
 
     REQUIRE(x.empty());
 
