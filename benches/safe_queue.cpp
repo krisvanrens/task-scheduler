@@ -22,7 +22,7 @@ void BM_PushData(benchmark::State& state) {
     }
   }
 
-  state.SetBytesProcessed(static_cast<int64_t>(x.max_size()));
+  state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(x.max_size()));
 }
 
 template<typename Queue>
@@ -43,7 +43,7 @@ void BM_PopData(benchmark::State& state) {
     }
   }
 
-  state.SetBytesProcessed(static_cast<int64_t>(x.max_size()));
+  state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(x.max_size()));
 }
 
 using namespace ts;
