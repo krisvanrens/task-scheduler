@@ -37,10 +37,9 @@ public:
     }
   }
 
-  tracer(const tracer& other) {
-    verbose_ = other.verbose_;
-    counts_  = other.counts_;
-
+  tracer(const tracer& other)
+    : verbose_{other.verbose_}
+    , counts_{other.counts_} {
     counts_.copy_ctor++;
 
     if (verbose_) {
@@ -61,10 +60,9 @@ public:
     return *this;
   }
 
-  tracer(tracer&& other) {
-    verbose_ = other.verbose_;
-    counts_  = other.counts_;
-
+  tracer(tracer&& other)
+    : verbose_{other.verbose_}
+    , counts_{other.counts_} {
     counts_.move_ctor++;
 
     if (verbose_) {
