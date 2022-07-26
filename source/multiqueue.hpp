@@ -37,7 +37,7 @@ class multiqueue final {
     }
   }
 
-  [[nodiscard]] bool is_current_sink_full() {
+  [[nodiscard]] bool is_current_sink_full() const {
     return (sink_cursor_->size() >= MaxQueueSize);
   }
 
