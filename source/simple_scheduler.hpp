@@ -44,7 +44,7 @@ requires(MaxQueueLength < 8192) class simple_scheduler final {
     executors_started_.arrive_and_wait();
 
     while (!stop_token.stop_requested()) {
-      if (auto&& job = queue_.pop(id); job) {
+      if (auto&& job{queue_.pop(id)}; job) {
         (*job).task_();
         (*job).completion_->trigger_completion();
       } else {
@@ -55,7 +55,7 @@ requires(MaxQueueLength < 8192) class simple_scheduler final {
   }
 
   void create_executors() {
-    for (unsigned int i = 0; i < static_cast<unsigned int>(num_executors_); i++) {
+    for (unsigned int i{}; i < static_cast<unsigned int>(num_executors_); i++) {
       executors_.emplace_back(std::bind_front(&simple_scheduler<MaxQueueLength>::executor, this), i);
     }
 
@@ -92,8 +92,8 @@ public:
   }
 
   [[nodiscard]] std::optional<completion_token> schedule(task<void()>&& task) {
-    auto completion = std::make_shared<detail::completion_data>();
-    auto job        = simple_job{std::move(task), completion};
+    auto completion{std::make_shared<detail::completion_data>()};
+    auto job{simple_job{std::move(task), completion}};
 
     if (queue_.push(std::move(job))) {
       work_cv_.notify_one();

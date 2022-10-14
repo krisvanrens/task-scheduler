@@ -26,7 +26,7 @@ class multiqueue final {
   using queues     = std::deque<queue_t>;
   using queue_iter = typename queues::iterator;
 
-  static inline constexpr std::size_t MAX_NUMBER_OF_QUEUES = 1024;
+  static inline constexpr std::size_t MAX_NUMBER_OF_QUEUES{1024};
 
   queues     queues_;
   queue_iter sink_cursor_;
@@ -42,7 +42,7 @@ class multiqueue final {
   }
 
   [[nodiscard]] bool advance_sink() {
-    std::size_t advance_count = 0;
+    std::size_t advance_count{};
     do {
       advance_sink_cursor();
     } while (is_current_sink_full() && (advance_count++ < queues_.size()));
@@ -102,10 +102,10 @@ public:
       throw std::out_of_range("Queue index out of range");
     }
 
-    queue_iter source = queues_.begin() + static_cast<typename queues::difference_type>(index);
+    queue_iter source{queues_.begin() + static_cast<typename queues::difference_type>(index)};
 
     if (source->empty()) {
-      std::size_t advance_count = 0;
+      std::size_t advance_count{};
       do {
         source++;
 

@@ -14,7 +14,7 @@ namespace detail {
 class completion_data final {
   mutable std::mutex      mutex_;
   std::condition_variable condition_;
-  bool                    completed_ = false;
+  bool                    completed_{false};
 
 public:
   [[nodiscard]] bool is_completed() const {
