@@ -52,4 +52,4 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
 
 # License
 
-This project is licensed under the [Boost Software License 1.0](https://choosealicense.com/licenses/bsl-1.0/).
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
