@@ -33,6 +33,7 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
 * Support the configuration of the amount of workers.
 * Support the configuration of the work queue length.
 * Support deferred return value propagation for task results. (TODO)
+* Support the graceful handling of exceptions (TODO)
 
 ## SHOULD
 
