@@ -46,6 +46,10 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
 
 * Support small object optimization for task objects. (TODO)
 
+# Ideas
+
+* Use `if constexpr (std::is_void_v<T>)` to detect tasks without a return value.
+
 # License
 
 This project is licensed under the [Boost Software License 1.0](https://choosealicense.com/licenses/bsl-1.0/).
