@@ -26,7 +26,7 @@ class multiqueue final {
   using queues     = std::deque<queue_t>;
   using queue_iter = typename queues::iterator;
 
-  static inline constexpr std::size_t MAX_NUMBER_OF_QUEUES{1024};
+  static constexpr std::size_t MAX_NUMBER_OF_QUEUES{1024};
 
   queues     queues_;
   queue_iter sink_cursor_;
@@ -68,7 +68,7 @@ public:
   multiqueue(multiqueue&&) noexcept            = default;
   multiqueue& operator=(multiqueue&&) noexcept = default;
 
-  [[nodiscard]] static inline constexpr std::size_t max_queue_size() {
+  [[nodiscard]] static constexpr std::size_t max_queue_size() {
     return MaxQueueSize;
   }
 

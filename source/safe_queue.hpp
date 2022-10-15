@@ -8,13 +8,13 @@
 #include <shared_mutex>
 #include <utility>
 
-static inline constexpr std::size_t MAX_SIZE_LIMIT{8192};
+static constexpr std::size_t MAX_SIZE_LIMIT{8192};
 
 namespace ts {
 
 inline namespace v1 {
 
-static inline constexpr std::size_t safe_queue_max_size_limit{MAX_SIZE_LIMIT};
+static constexpr std::size_t safe_queue_max_size_limit{MAX_SIZE_LIMIT};
 
 /**
  * Thread-safe queue with direct pop-result support.
@@ -30,11 +30,11 @@ public:
   safe_queue(safe_queue& other) noexcept      = delete;
   safe_queue& operator=(safe_queue&) noexcept = delete;
 
-  [[nodiscard]] static inline constexpr std::size_t max_size_limit() noexcept {
+  [[nodiscard]] static constexpr std::size_t max_size_limit() noexcept {
     return MAX_SIZE_LIMIT;
   }
 
-  [[nodiscard]] static inline constexpr std::size_t max_size() noexcept {
+  [[nodiscard]] static constexpr std::size_t max_size() noexcept {
     return MaxSize;
   }
 
