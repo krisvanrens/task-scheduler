@@ -16,9 +16,7 @@ inline namespace v1 {
 
 static constexpr std::size_t safe_queue_max_size_limit{MAX_SIZE_LIMIT};
 
-/**
- * Thread-safe queue with direct pop-result support.
- */
+/// Thread-safe queue with direct pop-result support.
 template<typename T, std::size_t MaxSize>
 requires((MaxSize > 0) && (MaxSize <= MAX_SIZE_LIMIT)) class safe_queue final {
   std::deque<T>             queue_;

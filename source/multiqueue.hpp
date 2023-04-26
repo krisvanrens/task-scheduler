@@ -15,11 +15,9 @@ namespace ts {
 
 inline namespace v1 {
 
-/**
- * Array of thread-safe queues. This type features an API similar to a single queue. For any item push, the load is
- *  uniformly distributed over the internal queues. The pop call is called with an index to indicate the internal queue
- *  index. However, when the indexed queue is empty, data is 'stolen' from the next non-empty queue.
- */
+/// Array of thread-safe queues. This type features an API similar to a single queue. For any item push, the load is
+///  uniformly distributed over the internal queues. The pop call is called with an index to indicate the internal queue
+///  index. However, when the indexed queue is empty, data is 'stolen' from the next non-empty queue.
 template<typename T, std::size_t MaxQueueSize>
 class multiqueue final {
   using queue_t    = safe_queue<T, MaxQueueSize>;
@@ -85,7 +83,8 @@ public:
   }
 
   [[nodiscard]] std::size_t size() const {
-    return std::accumulate(queues_.begin(), queues_.end(), 0u, [](const auto& size, const auto& queue) { return (size + queue.size()); });
+    return std::accumulate(queues_.begin(), queues_.end(), 0u,
+                           [](const auto& size, const auto& queue) { return (size + queue.size()); });
   }
 
   template<typename U>

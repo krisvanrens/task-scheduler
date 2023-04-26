@@ -20,12 +20,10 @@ namespace ts {
 
 inline namespace v1 {
 
-/**
- * Simple scheduler. A thread pool with an associated work queue per executor. This scheduler is able to handle tasks
- *  with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A multiqueue is used
- *  to implement work stealing for executors: when their respective work queue is empty, work is taken from another
- *  executors' queue. At schedule time, a completion token is returned for the callee to wait on task completion.
- */
+/// Simple scheduler. A thread pool with an associated work queue per executor. This scheduler is able to handle tasks
+///  with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A multiqueue is used
+///  to implement work stealing for executors: when their respective work queue is empty, work is taken from another
+///  executors' queue. At schedule time, a completion token is returned for the callee to wait on task completion.
 template<unsigned int MaxQueueLength>
 requires(MaxQueueLength < 8192) class simple_scheduler final {
   struct simple_job {

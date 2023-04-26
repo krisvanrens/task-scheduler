@@ -13,6 +13,7 @@ inline namespace v1 {
 template<typename>
 class task;
 
+/// Task wrapper to hold type-erased callables.
 template<typename Ret, typename... Args>
 class task<Ret(Args...)> final {
   struct concept_t {

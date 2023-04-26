@@ -111,7 +111,8 @@ TEST_SUITE("task") {
     CHECK_THROWS(std::apply(t, make_args<T>()));
   }
 
-  TEST_CASE_TEMPLATE("Non-default construction", T, void(), int(), void(int), int(int), void(int, float), int(int, float)) {
+  TEST_CASE_TEMPLATE("Non-default construction", T, void(), int(), void(int), int(int), void(int, float),
+                     int(int, float)) {
     task<T> t{make_function<T>()};
 
     CHECK(t);
