@@ -85,7 +85,7 @@ public:
   simple_scheduler(const simple_scheduler&) noexcept            = delete;
   simple_scheduler& operator=(const simple_scheduler&) noexcept = delete;
 
-  [[nodiscard]] constexpr std::size_t num_executors() const {
+  [[nodiscard]] constexpr std::size_t num_executors() const noexcept {
     return executors_.size();
   }
 

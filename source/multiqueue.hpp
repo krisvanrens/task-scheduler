@@ -66,23 +66,23 @@ public:
   multiqueue(multiqueue&&) noexcept            = default;
   multiqueue& operator=(multiqueue&&) noexcept = default;
 
-  [[nodiscard]] static constexpr std::size_t max_queue_size() {
+  [[nodiscard]] static constexpr std::size_t max_queue_size() noexcept {
     return MaxQueueSize;
   }
 
-  [[nodiscard]] constexpr std::size_t num_queues() const {
+  [[nodiscard]] constexpr std::size_t num_queues() const noexcept {
     return queues_.size();
   }
 
-  [[nodiscard]] constexpr std::size_t max_capacity() const {
+  [[nodiscard]] constexpr std::size_t max_capacity() const noexcept {
     return queues_.size() * MaxQueueSize;
   }
 
-  [[nodiscard]] bool empty() const {
+  [[nodiscard]] bool empty() const noexcept {
     return std::all_of(queues_.begin(), queues_.end(), [](const auto& queue) { return queue.empty(); });
   }
 
-  [[nodiscard]] std::size_t size() const {
+  [[nodiscard]] std::size_t size() const noexcept {
     return std::accumulate(queues_.begin(), queues_.end(), 0u,
                            [](const auto& size, const auto& queue) { return (size + queue.size()); });
   }
