@@ -35,7 +35,7 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
   * Lambda expressions.
 * Support the configuration of the amount of workers.
 * Support the configuration of the work queue length.
-* Support the graceful handling of exceptions. (TODO)
+* Support the graceful handling of exceptions.
 * Support deferred return value propagation for task results. (TODO)
 
 ## SHOULD

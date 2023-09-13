@@ -50,7 +50,14 @@ requires(MaxQueueLength < 8192) class simple_scheduler final {
 
     while (!stop_token.stop_requested()) {
       if (auto&& job{queue_.pop(id)}; job) {
-        (*job).task_();
+        try {
+          (*job).task_();
+        } catch (const std::exception& error) {
+          // TODO
+        } catch (...) {
+          // TODO
+        }
+
         (*job).completion_->trigger_completion();
       } else {
         std::unique_lock lock{work_mutex_};

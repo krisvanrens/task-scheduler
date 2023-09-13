@@ -131,4 +131,11 @@ TEST_SUITE("simple_scheduler") {
     CHECK((time_end - time_start) < 200ms);
   }
 
+  TEST_CASE("Test graceful exception handling" * doctest::timeout(1)) {
+    CHECK_NOTHROW([] {
+      simple_scheduler<3> s{1};
+      (void)s.schedule([] { throw std::exception{}; });
+    });
+  }
+
 } // TEST_SUITE
