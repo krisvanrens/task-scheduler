@@ -12,9 +12,9 @@ inline namespace v1 {
 namespace detail {
 
 class completion_data final {
-  mutable std::mutex      mutex_;
-  std::condition_variable condition_;
-  bool                    completed_{false};
+  mutable std::mutex              mutex_;
+  mutable std::condition_variable condition_;
+  bool                            completed_{false};
 
 public:
   [[nodiscard]] bool is_completed() const {
@@ -22,7 +22,7 @@ public:
     return completed_;
   }
 
-  void wait_for_completion() {
+  void wait_for_completion() const {
     std::unique_lock lock{mutex_};
     condition_.wait(lock, [this] { return this->completed_; });
   }
@@ -47,7 +47,7 @@ public:
     }
   }
 
-  void wait() {
+  void wait() const {
     data_->wait_for_completion();
   }
 
