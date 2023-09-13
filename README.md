@@ -1,8 +1,11 @@
 # task-scheduler
 
 Task Scheduler in C++20.
+This is a header-only library.
 
 ## Building
+
+For testing and benchmarking, additional build commands are needed.
 
 Requirements:
 
@@ -32,8 +35,8 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
   * Lambda expressions.
 * Support the configuration of the amount of workers.
 * Support the configuration of the work queue length.
+* Support the graceful handling of exceptions. (TODO)
 * Support deferred return value propagation for task results. (TODO)
-* Support the graceful handling of exceptions (TODO)
 
 ## SHOULD
 
