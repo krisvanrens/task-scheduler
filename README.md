@@ -52,6 +52,7 @@ The following requirements levels are as defined in [RFC 2119](https://www.ietf.
 # Ideas
 
 * Use `if constexpr (std::is_void_v<T>)` to detect tasks without a return value.
+* Integrate `std::expected` into the completion token once C++23 is around.
 
 # License
 
