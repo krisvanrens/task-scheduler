@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <condition_variable>
+#include <exception>
 #include <functional>
 #include <latch>
 #include <memory>
@@ -52,10 +53,8 @@ requires(MaxQueueLength < 8192) class simple_scheduler final {
       if (auto&& job{queue_.pop(id)}; job) {
         try {
           (*job).task_();
-        } catch (const std::exception& error) {
-          // TODO
         } catch (...) {
-          // TODO
+          (*job).completion_->exception() = std::current_exception();
         }
 
         (*job).completion_->trigger_completion();

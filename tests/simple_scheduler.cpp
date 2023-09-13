@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <exception>
 #include <stdexcept>
 #include <thread>
 #include <utility>
@@ -136,6 +137,41 @@ TEST_SUITE("simple_scheduler") {
       simple_scheduler<3> s{1};
       (void)s.schedule([] { throw std::exception{}; });
     });
+  }
+
+  TEST_CASE("Test exception handling and checking" * doctest::timeout(1)) {
+    simple_scheduler<4> s{1};
+
+    auto completion0 = s.schedule([] {});
+    auto completion1 = s.schedule([] { throw std::exception{}; });
+    auto completion2 = s.schedule([] { throw std::logic_error{"logic"}; });
+    auto completion3 = s.schedule([] { throw std::runtime_error{"runtime"}; });
+
+    // Wait until (hopefully) all tasks are flushed.
+    std::this_thread::sleep_for(100ms);
+
+    REQUIRE(completion0);
+    REQUIRE(completion1);
+    REQUIRE(completion2);
+    REQUIRE(completion3);
+
+    CHECK_FALSE(completion0->exception().has_value());
+
+    REQUIRE(completion1->exception().has_value());
+    REQUIRE(completion2->exception().has_value());
+    REQUIRE(completion3->exception().has_value());
+
+    try {
+      std::rethrow_exception(*completion2->exception());
+    } catch (const std::exception& error) {
+      CHECK(std::string{error.what()} == "logic");
+    }
+
+    try {
+      std::rethrow_exception(*completion3->exception());
+    } catch (const std::exception& error) {
+      CHECK(std::string{error.what()} == "runtime");
+    }
   }
 
 } // TEST_SUITE

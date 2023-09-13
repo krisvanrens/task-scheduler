@@ -4,7 +4,9 @@
 #include <doctest/doctest.h>
 
 #include <chrono>
+#include <exception>
 #include <memory>
+#include <stdexcept>
 #include <thread>
 
 using namespace ts;
@@ -26,6 +28,20 @@ TEST_SUITE("completion_data") {
     d.trigger_completion();
 
     CHECK(d.is_completed());
+  }
+
+  TEST_CASE("Exception storage") {
+    completion_data d;
+
+    CHECK_FALSE(d.exception());
+
+    try {
+      throw std::invalid_argument{"test"};
+    } catch (...) {
+      d.exception() = std::current_exception();
+    }
+
+    CHECK(d.exception());
   }
 }
 
@@ -57,6 +73,27 @@ TEST_SUITE("completion_token") {
 
     CHECK(t);
     CHECK(duration_cast<milliseconds>(time_end - time_start).count() >= 100);
+  }
+
+  TEST_CASE("Exception handling") {
+    auto             data = std::make_shared<detail::completion_data>();
+    completion_token t{data};
+
+    CHECK_FALSE(t.exception());
+
+    try {
+      throw std::invalid_argument{"test"};
+    } catch (...) {
+      data->exception() = std::current_exception();
+    }
+
+    REQUIRE(t.exception());
+
+    try {
+      std::rethrow_exception(*t.exception());
+    } catch (const std::exception& error) {
+      CHECK(std::string{error.what()} == "test");
+    }
   }
 
 } // TEST_SUITE

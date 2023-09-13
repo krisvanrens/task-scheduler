@@ -1,8 +1,10 @@
 #pragma once
 
 #include <condition_variable>
+#include <exception>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <stdexcept>
 
 namespace ts {
@@ -12,9 +14,10 @@ inline namespace v1 {
 namespace detail {
 
 class completion_data final {
-  mutable std::mutex              mutex_;
-  mutable std::condition_variable condition_;
-  bool                            completed_{false};
+  mutable std::mutex                mutex_;
+  mutable std::condition_variable   condition_;
+  bool                              completed_{false};
+  std::optional<std::exception_ptr> exception_;
 
 public:
   [[nodiscard]] bool is_completed() const {
@@ -31,6 +34,16 @@ public:
     std::unique_lock lock{mutex_};
     completed_ = true;
     condition_.notify_all();
+  }
+
+  [[nodiscard]] const std::optional<std::exception_ptr>& exception() const {
+    std::unique_lock lock{mutex_};
+    return exception_;
+  }
+
+  [[nodiscard]] std::optional<std::exception_ptr>& exception() {
+    std::unique_lock lock{mutex_};
+    return exception_;
   }
 };
 
@@ -71,6 +84,15 @@ public:
   ///
   [[nodiscard]] operator bool() const {
     return data_->is_completed();
+  }
+
+  ///
+  /// Check if an exception was thrown during completion of the associated entity.
+  ///
+  /// \returns An optional exception object. Will be empty if there was no exception, or if the token is not completed.
+  ///
+  [[nodiscard]] std::optional<std::exception_ptr> exception() const {
+    return data_->exception();
   }
 };
 
