@@ -5,6 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <shared_mutex>
 #include <stdexcept>
 
 namespace ts {
@@ -14,19 +15,19 @@ inline namespace v1 {
 namespace detail {
 
 class completion_data final {
-  mutable std::mutex                mutex_;
-  mutable std::condition_variable   condition_;
-  bool                              completed_{false};
-  std::optional<std::exception_ptr> exception_;
+  mutable std::shared_mutex           mutex_;
+  mutable std::condition_variable_any condition_;
+  bool                                completed_{false};
+  std::optional<std::exception_ptr>   exception_;
 
 public:
   [[nodiscard]] bool is_completed() const {
-    std::unique_lock lock{mutex_};
+    std::shared_lock lock{mutex_};
     return completed_;
   }
 
   void wait_for_completion() const {
-    std::unique_lock lock{mutex_};
+    std::shared_lock lock{mutex_};
     condition_.wait(lock, [this] { return this->completed_; });
   }
 
@@ -37,7 +38,7 @@ public:
   }
 
   [[nodiscard]] const std::optional<std::exception_ptr>& exception() const {
-    std::unique_lock lock{mutex_};
+    std::shared_lock lock{mutex_};
     return exception_;
   }
 
