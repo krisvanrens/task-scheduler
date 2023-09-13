@@ -15,9 +15,16 @@ namespace ts {
 
 inline namespace v1 {
 
-/// Array of thread-safe queues. This type features an API similar to a single queue. For any item push, the load is
-///  uniformly distributed over the internal queues. The pop call is called with an index to indicate the internal queue
-///  index. However, when the indexed queue is empty, data is 'stolen' from the next non-empty queue.
+///
+/// Array of thread-safe queues (FIFO) with a single interface.
+///
+/// This type features an API similar to a single queue. For any item push, the load is uniformly distributed over the
+///  internal queues. The pop call is called with an index to indicate the internal queue index. However, when the in-
+///  dexed queue is empty, data is 'stolen' from the next non-empty queue (work stealing).
+///
+/// \param T            The queue element value type.
+/// \param MaxQueueSize The maximum queue size. Must be in range `1..MAX_SIZE_LIMIT` (limit for a single queue).
+///
 template<typename T, std::size_t MaxQueueSize>
 class multiqueue final {
   using queue_t    = safe_queue<T, MaxQueueSize>;
@@ -49,6 +56,11 @@ class multiqueue final {
   }
 
 public:
+  ///
+  /// Constructor.
+  ///
+  /// \param num_queues The number of underlying queues to instantiate.
+  ///
   explicit multiqueue(std::size_t num_queues) {
     if (num_queues == 0) {
       throw std::underflow_error("Number of queues must be non-zero");
@@ -66,27 +78,60 @@ public:
   multiqueue(multiqueue&&) noexcept            = default;
   multiqueue& operator=(multiqueue&&) noexcept = default;
 
+  ///
+  /// Get the maximum queue size.
+  ///
+  /// \returns The maximum queue size.
+  ///
   [[nodiscard]] static constexpr std::size_t max_queue_size() noexcept {
     return MaxQueueSize;
   }
 
+  ///
+  /// Get the number of underlying queues.
+  ///
+  /// \returns The number of underlying queues.
+  ///
   [[nodiscard]] constexpr std::size_t num_queues() const noexcept {
     return queues_.size();
   }
 
+  ///
+  /// Get the maximum total capacity: the single queue capacity accumulated for all queues.
+  ///
+  /// \returns The total multiqueue capacity.
+  ///
   [[nodiscard]] constexpr std::size_t max_capacity() const noexcept {
     return queues_.size() * MaxQueueSize;
   }
 
+  ///
+  /// Check if the queue is empty.
+  ///
+  /// \returns `true` if the queue is empty, `false` if otherwise.
+  ///
   [[nodiscard]] bool empty() const noexcept {
     return std::all_of(queues_.begin(), queues_.end(), [](const auto& queue) { return queue.empty(); });
   }
 
+  ///
+  /// Get the current queue occupation size.
+  ///
+  /// \returns The number of elements in the queue.
+  ///
   [[nodiscard]] std::size_t size() const noexcept {
     return std::accumulate(queues_.begin(), queues_.end(), 0u,
                            [](const auto& size, const auto& queue) { return (size + queue.size()); });
   }
 
+  ///
+  /// Push a new element into the back of the queue.
+  ///
+  /// \param element The element to push on the queue.
+  ///
+  /// \returns `true` if the element is accepted, `false` if the queue could not accept the element (because maximum
+  ///           occupation capacity is reached).
+  ///
   template<typename U>
   [[nodiscard]] bool push(U&& element) {
     if (!advance_sink()) {
@@ -96,6 +141,16 @@ public:
     return sink_cursor_->push(std::forward<U>(element));
   }
 
+  ///
+  /// Pop an element off the front of an underlying queue. Will employ work stealing to select a non-empty queue.
+  ///
+  /// \param index Underlying queue index to pop from. If the indexed queue is empty, other queues will be checked in
+  ///               a round-robin style to steal work.
+  ///
+  /// \returns An optional element. The optional is empty if all queues were empty.
+  ///
+  /// \throws `std::out_of_range` if the queue index is out of range.
+  ///
   [[nodiscard]] std::optional<T> pop(std::size_t index) {
     if (index >= queues_.size()) {
       throw std::out_of_range("Queue index out of range");
@@ -117,6 +172,9 @@ public:
     return source->pop();
   }
 
+  ///
+  /// Flush the queue, removing all elements from all queues.
+  ///
   void flush() {
     for (auto& queue : queues_) {
       queue.flush();

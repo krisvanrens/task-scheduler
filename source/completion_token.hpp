@@ -36,10 +36,20 @@ public:
 
 } // namespace detail
 
+///
+/// Completion token, a token used to check and wait for associated entity completion.
+///
 class completion_token final {
   std::shared_ptr<detail::completion_data> data_;
 
 public:
+  ///
+  /// Constructor.
+  ///
+  /// \param data The associated completion data.
+  ///
+  /// \throws `std::logic_error` if the completion data is empty.
+  ///
   explicit completion_token(std::shared_ptr<detail::completion_data> data)
     : data_{data} {
     if (!data_) {
@@ -47,10 +57,18 @@ public:
     }
   }
 
+  ///
+  /// Blocking wait for completion of the associated entity.
+  ///
   void wait() const {
     data_->wait_for_completion();
   }
 
+  ///
+  /// Check for completion.
+  ///
+  /// \returns True if associated entity is completed, false if not.
+  ///
   [[nodiscard]] operator bool() const {
     return data_->is_completed();
   }

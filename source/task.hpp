@@ -13,7 +13,9 @@ inline namespace v1 {
 template<typename>
 class task;
 
-/// Task wrapper to hold type-erased callables.
+///
+/// Task wrapper to hold type-erased callables like function objects and function pointers.
+///
 template<typename Ret, typename... Args>
 class task<Ret(Args...)> final {
   struct concept_t {
@@ -40,6 +42,11 @@ class task<Ret(Args...)> final {
 public:
   constexpr task() = default;
 
+  ///
+  /// Constructor.
+  ///
+  /// \param value The callable object to wrap.
+  ///
   template<typename T>
   requires(std::is_invocable_r_v<Ret, T, Args...> && !std::same_as<std::decay_t<T>, task>) task(T&& value)
     : model_{std::make_unique<model_t<std::decay_t<T>>>(std::forward<T>(value))} {
@@ -48,10 +55,24 @@ public:
   task(task&&) noexcept            = default;
   task& operator=(task&&) noexcept = default;
 
+  ///
+  /// Check task validity.
+  ///
+  /// \returns `true` if the task holds a callable object, `false` if otherwise.
+  ///
   explicit operator bool() const noexcept {
     return !!model_;
   }
 
+  ///
+  /// Call the underlying callable object.
+  ///
+  /// \param args Parameter pack with callable arguments.
+  ///
+  /// \returns The return value of the callable.
+  ///
+  /// \throws `std::bad_function_call` if the wrapped callable object is empty.
+  ///
   Ret operator()(Args... args) {
     if (!model_) {
       throw std::bad_function_call{};

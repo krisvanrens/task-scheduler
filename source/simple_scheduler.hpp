@@ -20,10 +20,17 @@ namespace ts {
 
 inline namespace v1 {
 
-/// Simple scheduler. A thread pool with an associated work queue per executor. This scheduler is able to handle tasks
-///  with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A multiqueue is used
-///  to implement work stealing for executors: when their respective work queue is empty, work is taken from another
-///  executors' queue. At schedule time, a completion token is returned for the callee to wait on task completion.
+///
+/// Simple task scheduler.
+///
+/// This is essentially a thread pool with an associated work queue per executor. This scheduler is able to handle
+///  tasks with signature 'void()`, so it can be used to schedule tasks wrapped in a lambda expression. A multiqueue
+///  is used to implement work stealing for executors: when their respective work queue is empty, work is taken from
+///  another executors' queue. At schedule time, a completion token is returned for the callee to wait on task comple-
+///  tion.
+///
+/// The template argument `MaxQueueLength` indicates the maximum underlying task queue length.
+///
 template<unsigned int MaxQueueLength>
 requires(MaxQueueLength < 8192) class simple_scheduler final {
   struct simple_job {
@@ -61,6 +68,14 @@ requires(MaxQueueLength < 8192) class simple_scheduler final {
   }
 
 public:
+  ///
+  /// Constructor.
+  ///
+  /// \param num_executors The number of task executors. Must be between 1 and the number of execution cores.
+  ///
+  /// \throws `std::underflow_error` if the provided amount of executors is 0.
+  /// \throws `std::overflow_error` if the provided amount of executors is greater than the number of execution cores.
+  ///
   explicit simple_scheduler(std::size_t num_executors)
     : num_executors_{num_executors}
     , queue_{num_executors}
@@ -85,10 +100,26 @@ public:
   simple_scheduler(const simple_scheduler&) noexcept            = delete;
   simple_scheduler& operator=(const simple_scheduler&) noexcept = delete;
 
+  ///
+  /// Get the number of executors.
+  ///
+  /// \returns The number of executors for this scheduler.
+  ///
   [[nodiscard]] constexpr std::size_t num_executors() const noexcept {
     return executors_.size();
   }
 
+  ///
+  /// Schedule a task.
+  ///
+  /// Scheduling may fail if the associated queues are at their maximum capacity.
+  ///
+  /// \param task A function object to be processed. If scheduling failed, the task will be moved back.
+  ///
+  /// \returns An optional completion token. The optional value is empty if scheduling of the task failed (e.g. when
+  ///           the underlying task queues are at their maximum capacity). If scheduling succeeds, the optional will
+  ///           hold a completion token that can be used to wait on for task completion.
+  ///
   [[nodiscard]] std::optional<completion_token> schedule(task<void()>&& task) {
     auto completion{std::make_shared<detail::completion_data>()};
     auto job{simple_job{std::move(task), completion}};
@@ -103,6 +134,10 @@ public:
     return {};
   }
 
+  ///
+  /// Flush all underlying queues, removing all waiting tasks. Tasks that are already in execution will be not be
+  ///  stopped forcefully, and have to be handled using the associated completion tokens.
+  ///
   void flush() {
     queue_.flush();
   }
